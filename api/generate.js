@@ -12,54 +12,65 @@ PENTING: Balas HANYA dengan JSON valid. Tidak ada teks di luar JSON.`;
 
 function buildPrompt(topic, platform, tone, format, trendContext) {
   const isVertical = format === '9:16';
-  const trendLine = trendContext
-    ? `\nKonteks tren terkini yang relevan (gunakan sebagai bumbu, bukan topik utama): "${trendContext}"`
-    : '';
-  return `Buat konten slide carousel ${platform} tentang: "${topic}"${trendLine}
-Tone: ${tone}
-Format: ${isVertical ? 'Vertikal 9:16 (Reels/TikTok/Stories)' : 'Square 1:1 (IG Feed/LinkedIn)'}
 
-Hasilkan JSON persis seperti ini (jumlah slide fleksibel 4-7 sesuai konten):
+  if (trendContext) {
+    // Mode kronologi berita
+    return `Buat konten slide carousel KRONOLOGI BERITA untuk ${platform}.
+Topik kreator: "${topic}"
+Berita yang dipilih: "${trendContext}"
+Tone: ${tone}
+Format: ${isVertical ? 'Vertikal 9:16' : 'Square 1:1'}
+
+Susun sebagai KRONOLOGI — ceritakan berita ini slide per slide secara berurutan dan mendalam.
+Jumlah slide: 8-10 slide.
+
+Hasilkan JSON:
 {
   "slides": [
-    {
-      "num": 1,
-      "type": "hook",
-      "headline": "Hook yang sangat kuat, bikin orang berhenti scroll (max 10 kata)",
-      "body": "Subtext pendek yang memperkuat rasa penasaran (max 12 kata)"
-    },
-    {
-      "num": 2,
-      "type": "body",
-      "headline": "Poin utama 1, singkat dan kuat (max 7 kata)",
-      "body": "Penjelasan 2-3 kalimat yang konkret, bukan klise"
-    },
-    {
-      "num": 3,
-      "type": "body",
-      "headline": "Poin utama 2 (max 7 kata)",
-      "body": "Penjelasan 2-3 kalimat"
-    },
-    {
-      "num": 4,
-      "type": "body",
-      "headline": "Poin utama 3 (max 7 kata)",
-      "body": "Penjelasan 2-3 kalimat"
-    },
-    {
-      "num": 5,
-      "type": "cta",
-      "headline": "Ajakan aksi spesifik (max 8 kata)",
-      "body": "Instruksi konkret: save, komen, follow, DM — pilih yang paling relevan"
-    }
+    {"num":1,"type":"hook","headline":"Hook mengejutkan dari berita ini (max 10 kata)","body":"Subtext yang bikin penasaran (max 12 kata)"},
+    {"num":2,"type":"body","headline":"Latar belakang / Siapa yang terlibat","body":"2-3 kalimat konteks penting sebelum kejadian"},
+    {"num":3,"type":"body","headline":"Awal kejadian / Kapan & di mana","body":"2-3 kalimat kronologi awal"},
+    {"num":4,"type":"body","headline":"Perkembangan 1 — apa yang terjadi selanjutnya","body":"2-3 kalimat detail perkembangan"},
+    {"num":5,"type":"body","headline":"Perkembangan 2 — titik kritis / fakta mengejutkan","body":"2-3 kalimat fakta paling penting"},
+    {"num":6,"type":"body","headline":"Respons / Reaksi pihak terkait","body":"2-3 kalimat siapa bilang apa"},
+    {"num":7,"type":"body","headline":"Dampak / Apa artinya untuk kita","body":"2-3 kalimat relevansi ke pembaca"},
+    {"num":8,"type":"cta","headline":"Pendapat kamu tentang ini?","body":"Ajak diskusi: komen pendapat, share ke teman, ikuti perkembangannya"}
   ],
-  "caption": "Caption siap posting dengan opening kuat, 2-3 paragraf pendek, emoji secukupnya",
-  "hashtags": "#hashtag1 #hashtag2 (8-12 hashtag campuran besar dan niche)"
+  "caption": "Caption berita yang engaging, 2-3 paragraf, emoji secukupnya, opening kuat",
+  "hashtags": "8-12 hashtag relevan campuran trending dan niche"
 }
 
 Pastikan:
-- Slide 1 hook SANGAT kuat dan spesifik, tidak generik
-- Tiap body slide berdiri sendiri — orang paham meski baca satu slide saja
+- Tiap slide melanjutkan cerita slide sebelumnya — terasa seperti membaca artikel yang dipotong
+- Fakta konkret, bukan generik
+- Tone: ${tone}
+- Semua Bahasa Indonesia`;
+  }
+
+  // Mode konten biasa
+  return `Buat konten slide carousel ${platform} tentang: "${topic}"
+Tone: ${tone}
+Format: ${isVertical ? 'Vertikal 9:16 (Reels/TikTok/Stories)' : 'Square 1:1 (IG Feed/LinkedIn)'}
+
+Hasilkan JSON (jumlah slide 7-9 sesuai kedalaman konten):
+{
+  "slides": [
+    {"num":1,"type":"hook","headline":"Hook sangat kuat, spesifik, bikin berhenti scroll (max 10 kata)","body":"Subtext memperkuat rasa penasaran (max 12 kata)"},
+    {"num":2,"type":"body","headline":"Poin utama 1 (max 7 kata)","body":"2-3 kalimat konkret dan berisi"},
+    {"num":3,"type":"body","headline":"Poin utama 2 (max 7 kata)","body":"2-3 kalimat konkret"},
+    {"num":4,"type":"body","headline":"Poin utama 3 (max 7 kata)","body":"2-3 kalimat konkret"},
+    {"num":5,"type":"body","headline":"Poin utama 4 (max 7 kata)","body":"2-3 kalimat konkret"},
+    {"num":6,"type":"body","headline":"Poin utama 5 — insight mendalam (max 7 kata)","body":"2-3 kalimat yang paling valuable"},
+    {"num":7,"type":"body","headline":"Kesalahan umum / Mitos yang perlu diluruskan","body":"2-3 kalimat yang surprising dan relatable"},
+    {"num":8,"type":"cta","headline":"Ajakan aksi spesifik (max 8 kata)","body":"Instruksi konkret: save, komen, follow, DM"}
+  ],
+  "caption": "Caption siap posting, opening kuat, 2-3 paragraf pendek, emoji secukupnya",
+  "hashtags": "8-12 hashtag campuran besar dan niche"
+}
+
+Pastikan:
+- Slide 1 hook SANGAT kuat dan spesifik
+- Tiap body slide memberikan value sendiri
 - Tone konsisten: ${tone}
 - Semua Bahasa Indonesia`;
 }
@@ -98,7 +109,7 @@ export default async function handler(req, res) {
           model,
           messages: [{ role: 'system', content: SYSTEM }, ...messages],
           temperature: 0.8,
-          max_tokens: 1500,
+          max_tokens: 2500,
         }),
       });
 

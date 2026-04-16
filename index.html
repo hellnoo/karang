@@ -179,11 +179,8 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .slide[data-theme="light"] .s-bottom-logo img{mix-blend-mode:multiply;opacity:.65}
 .slide[data-theme="warm"] .s-bottom-logo img{mix-blend-mode:screen;opacity:.75}
 
-/* WATERMARK diagonal */
-.s-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);pointer-events:none;z-index:2;width:110%;display:flex;align-items:center;justify-content:center}
-.s-watermark img{width:75%;max-height:320px;object-fit:contain;opacity:.055;mix-blend-mode:screen}
-.slide[data-theme="light"] .s-watermark img{mix-blend-mode:multiply;opacity:.04}
-.s-watermark-text{font-size:120px;font-weight:800;letter-spacing:12px;color:var(--s-text);opacity:.045;white-space:nowrap;text-transform:uppercase;font-family:var(--s-fh,'Instrument Serif'),serif}
+/* ACCOUNT NAME di bottom bar */
+.s-bottom-account{font-size:20px;font-weight:600;color:var(--s-muted);letter-spacing:.5px}
 .s-bottom-name{font-size:22px;font-weight:700;color:var(--s-muted);letter-spacing:1px}
 .s-counter{font-size:20px;color:var(--s-muted);font-weight:500}
 
@@ -616,14 +613,13 @@ function buildSlide(s, i, fmtClass, t) {
   const brand = brandLogo
     ? `<img src="${brandLogo}" alt="brand">`
     : `<span class="s-bottom-name">Karang</span>`;
-  const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}</div><div class="s-counter">${i+1} / ${total}</div></div>`;
+  const acct = accountName ? `<div class="s-bottom-account">${esc(accountName)}</div>` : '';
+  const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}${acct}</div><div class="s-counter">${i+1} / ${total}</div></div>`;
   const bgEnabled = document.getElementById('bgToggle').checked;
   const bgHtml = bgEnabled && bgImageUrl
     ? `<img class="s-bg-img" src="${bgImageUrl}" alt="">`
     : '';
-  const wmText = accountName || 'Karang';
-  const watermark = `<div class="s-watermark"><div class="s-watermark-text">${esc(wmText)}</div></div>`;
-  const base = `<div class="s-bg"></div>${bgHtml}${watermark}<div class="s-topline"></div><div class="s-num">${num}</div>`;
+  const base = `<div class="s-bg"></div>${bgHtml}<div class="s-topline"></div><div class="s-num">${num}</div>`;
 
   if (s.type === 'hook') {
     el.innerHTML = `${base}

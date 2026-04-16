@@ -179,11 +179,11 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .slide[data-theme="light"] .s-bottom-logo img{mix-blend-mode:multiply;opacity:.65}
 .slide[data-theme="warm"] .s-bottom-logo img{mix-blend-mode:screen;opacity:.75}
 
-/* WATERMARK tengah slide */
-.s-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:2}
-.s-watermark img{height:280px;max-width:600px;object-fit:contain;opacity:.07;mix-blend-mode:screen}
-.slide[data-theme="light"] .s-watermark img{mix-blend-mode:multiply;opacity:.05}
-.s-watermark-text{font-size:80px;font-weight:800;letter-spacing:6px;color:var(--s-text);opacity:.05;white-space:nowrap;text-transform:uppercase}
+/* WATERMARK diagonal */
+.s-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-25deg);pointer-events:none;z-index:2;width:110%;display:flex;align-items:center;justify-content:center}
+.s-watermark img{width:75%;max-height:320px;object-fit:contain;opacity:.055;mix-blend-mode:screen}
+.slide[data-theme="light"] .s-watermark img{mix-blend-mode:multiply;opacity:.04}
+.s-watermark-text{font-size:120px;font-weight:800;letter-spacing:12px;color:var(--s-text);opacity:.045;white-space:nowrap;text-transform:uppercase;font-family:var(--s-fh,'Instrument Serif'),serif}
 .s-bottom-name{font-size:22px;font-weight:700;color:var(--s-muted);letter-spacing:1px}
 .s-counter{font-size:20px;color:var(--s-muted);font-weight:500}
 

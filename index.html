@@ -116,6 +116,26 @@ select option{background:var(--surface2)}
 .visual-list{list-style:none;display:flex;flex-direction:column;gap:8px}
 .visual-item{font-size:13px;color:var(--ink2);padding:8px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--p5)}
 
+/* LOGO UPLOAD */
+.logo-upload-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px dashed var(--border2);border-radius:12px;cursor:pointer;transition:all 0.15s;margin-bottom:16px}
+.logo-upload-row:hover{border-color:var(--p5);background:rgba(124,106,247,0.05)}
+.logo-upload-preview{width:44px;height:44px;border-radius:10px;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.logo-upload-preview img{width:100%;height:100%;object-fit:contain}
+.logo-upload-preview .placeholder-icon{font-size:20px;opacity:0.5}
+.logo-upload-info{flex:1}
+.logo-upload-info strong{font-size:13px;color:var(--ink);display:block;margin-bottom:2px}
+.logo-upload-info span{font-size:11px;color:var(--muted)}
+.logo-upload-btn{font-size:11px;font-weight:600;color:var(--p4);background:var(--p1);border:1px solid var(--p5);padding:5px 12px;border-radius:8px;white-space:nowrap}
+.logo-clear{font-size:11px;color:var(--muted);background:transparent;border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer;transition:all 0.15s;display:none}
+.logo-clear:hover{color:var(--r5);border-color:var(--r5)}
+.logo-clear.show{display:block}
+
+/* BRAND BAR di hasil */
+.brand-bar{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--surface2);border-radius:10px;margin-bottom:20px;border:1px solid var(--border)}
+.brand-bar.show{display:flex}
+.brand-bar img{height:32px;max-width:80px;object-fit:contain;border-radius:6px}
+.brand-bar-label{font-size:11px;color:var(--muted)}
+
 /* ERROR */
 .error-box{background:rgba(240,96,96,0.1);border:1px solid rgba(240,96,96,0.3);color:#f08080;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;display:none}
 .error-box.show{display:block}
@@ -193,6 +213,20 @@ select option{background:var(--surface2)}
       </div>
     </div>
 
+    <!-- Logo Upload -->
+    <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
+    <div class="logo-upload-row" onclick="document.getElementById('logoInput').click()">
+      <div class="logo-upload-preview" id="logoPreview">
+        <span class="placeholder-icon">🖼️</span>
+      </div>
+      <div class="logo-upload-info">
+        <strong id="logoName">Upload Logo Brand</strong>
+        <span>PNG, JPG, SVG — akan muncul di hasil generate</span>
+      </div>
+      <span class="logo-upload-btn">Pilih File</span>
+      <button class="logo-clear" id="logoClear" onclick="clearLogo(event)">Hapus</button>
+    </div>
+
     <div id="errorBox" class="error-box"></div>
 
     <button class="generate-btn" id="generateBtn" onclick="generate()">
@@ -203,6 +237,11 @@ select option{background:var(--surface2)}
 
   <!-- RESULTS -->
   <div class="results" id="results">
+
+    <div class="brand-bar" id="brandBar">
+      <img id="brandLogoImg" src="" alt="logo">
+      <span class="brand-bar-label">Logo brand kamu akan muncul bersama konten ini</span>
+    </div>
 
     <div class="section-label">Pilih Hook Terbaik</div>
     <div class="hooks-grid" id="hooksGrid"></div>
@@ -248,6 +287,40 @@ select option{background:var(--surface2)}
 // State
 let platform = 'Instagram Reels';
 let tone = 'Santai & relatable';
+let brandLogo = localStorage.getItem('karang_logo') || null;
+
+// Init logo on load
+if (brandLogo) applyLogo(brandLogo);
+
+function handleLogoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    brandLogo = ev.target.result;
+    localStorage.setItem('karang_logo', brandLogo);
+    applyLogo(brandLogo, file.name);
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyLogo(src, name) {
+  const preview = document.getElementById('logoPreview');
+  preview.innerHTML = `<img src="${src}" alt="logo">`;
+  document.getElementById('logoName').textContent = name || 'Logo tersimpan';
+  document.getElementById('logoClear').classList.add('show');
+}
+
+function clearLogo(e) {
+  e.stopPropagation();
+  brandLogo = null;
+  localStorage.removeItem('karang_logo');
+  document.getElementById('logoPreview').innerHTML = '<span class="placeholder-icon">🖼️</span>';
+  document.getElementById('logoName').textContent = 'Upload Logo Brand';
+  document.getElementById('logoClear').classList.remove('show');
+  document.getElementById('brandBar').classList.remove('show');
+  document.getElementById('logoInput').value = '';
+}
 
 // Platform select
 document.getElementById('platformGrid').addEventListener('click', e => {
@@ -313,6 +386,15 @@ async function generate() {
 }
 
 function renderResults(data) {
+  // Brand logo
+  const brandBar = document.getElementById('brandBar');
+  if (brandLogo) {
+    document.getElementById('brandLogoImg').src = brandLogo;
+    brandBar.classList.add('show');
+  } else {
+    brandBar.classList.remove('show');
+  }
+
   // Hooks
   const grid = document.getElementById('hooksGrid');
   grid.innerHTML = '';

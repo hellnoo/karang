@@ -1,11 +1,14 @@
 const MODELS = [
   'deepseek/deepseek-chat-v3-0324:free',
   'google/gemma-3-27b-it:free',
-  'openai/gpt-oss-20b:free',
   'meta-llama/llama-3.3-70b-instruct:free',
+  'openai/gpt-oss-20b:free',
   'qwen/qwen3-8b:free',
+  'qwen/qwen3-14b:free',
   'mistralai/mistral-small-3.1-24b-instruct:free',
+  'microsoft/phi-4-reasoning-plus:free',
   'nousresearch/hermes-3-llama-3.1-405b:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
   'meta-llama/llama-3.2-3b-instruct:free',
 ];
 
@@ -82,6 +85,8 @@ export default async function handler(req, res) {
   ];
 
   let lastError = 'Semua model gagal';
+  const errors = [];
+
   for (const model of MODELS) {
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -122,10 +127,17 @@ export default async function handler(req, res) {
 
       return res.status(200).json(parsed);
     } catch (err) {
+      errors.push(`${model.split('/')[1]}: ${err.message}`);
       lastError = err.message;
       continue;
     }
   }
 
-  res.status(500).json({ error: lastError });
+  // Semua model gagal — kasih info yang berguna
+  const isOverload = errors.every(e => e.includes('Provider returned error') || e.includes('overloaded') || e.includes('unavailable'));
+  const msg = isOverload
+    ? 'Model AI sedang overloaded. Tunggu 10-30 detik lalu coba lagi.'
+    : `Gagal di semua model. Error terakhir: ${lastError}`;
+
+  res.status(500).json({ error: msg, detail: errors });
 }

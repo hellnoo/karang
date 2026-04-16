@@ -1,15 +1,9 @@
 const MODELS = [
-  'deepseek/deepseek-chat-v3-0324:free',
-  'google/gemma-3-27b-it:free',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'openai/gpt-oss-20b:free',
-  'qwen/qwen3-8b:free',
-  'qwen/qwen3-14b:free',
-  'mistralai/mistral-small-3.1-24b-instruct:free',
-  'microsoft/phi-4-reasoning-plus:free',
-  'nousresearch/hermes-3-llama-3.1-405b:free',
-  'nvidia/nemotron-3-super-120b-a12b:free',
-  'meta-llama/llama-3.2-3b-instruct:free',
+  'openai/gpt-4o-mini',
+  'google/gemini-2.0-flash-001',
+  'anthropic/claude-3-haiku',
+  'deepseek/deepseek-chat-v3-0324',
+  'meta-llama/llama-3.3-70b-instruct',
 ];
 
 const SYSTEM = `Kamu adalah AI spesialis pembuatan konten slide media sosial untuk kreator Indonesia.

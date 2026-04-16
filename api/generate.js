@@ -10,9 +10,12 @@ const SYSTEM = `Kamu adalah AI spesialis pembuatan konten slide media sosial unt
 Tugas: buat konten slide carousel yang engaging, natural, dan siap produksi.
 PENTING: Balas HANYA dengan JSON valid. Tidak ada teks di luar JSON.`;
 
-function buildPrompt(topic, platform, tone, format) {
+function buildPrompt(topic, platform, tone, format, trendContext) {
   const isVertical = format === '9:16';
-  return `Buat konten slide carousel ${platform} tentang: "${topic}"
+  const trendLine = trendContext
+    ? `\nKonteks tren terkini yang relevan (gunakan sebagai bumbu, bukan topik utama): "${trendContext}"`
+    : '';
+  return `Buat konten slide carousel ${platform} tentang: "${topic}"${trendLine}
 Tone: ${tone}
 Format: ${isVertical ? 'Vertikal 9:16 (Reels/TikTok/Stories)' : 'Square 1:1 (IG Feed/LinkedIn)'}
 
@@ -71,11 +74,11 @@ export default async function handler(req, res) {
   const key = process.env.OPENROUTER_KEY;
   if (!key) return res.status(500).json({ error: 'OpenRouter API key belum dikonfigurasi' });
 
-  const { topic, platform, tone, format } = req.body || {};
+  const { topic, platform, tone, format, trendContext } = req.body || {};
   if (!topic) return res.status(400).json({ error: 'Topic wajib diisi' });
 
   const messages = [
-    { role: 'user', content: buildPrompt(topic, platform || 'Instagram', tone || 'Santai', format || '1:1') }
+    { role: 'user', content: buildPrompt(topic, platform || 'Instagram', tone || 'Santai', format || '1:1', trendContext) }
   ];
 
   let lastError = 'Semua model gagal';

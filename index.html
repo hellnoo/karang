@@ -32,6 +32,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 
 /* HEADER */
 .header{padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);z-index:100}
+.logo-mark{width:36px;height:36px;flex-shrink:0}
 .logo{font-family:'Instrument Serif',serif;font-size:22px;color:var(--p3);letter-spacing:0.5px}
 .logo span{color:var(--p5);font-style:italic}
 .badge{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--p4);background:var(--p1);border:1px solid var(--p5);padding:2px 8px;border-radius:20px}
@@ -44,6 +45,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 
 /* HERO */
 .hero{text-align:center;margin-bottom:48px}
+.hero-logo{display:flex;justify-content:center;margin-bottom:20px}
+.hero-logo svg{width:56px;height:56px;filter:drop-shadow(0 8px 24px rgba(124,106,247,0.35))}
 .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(32px,5vw,52px);line-height:1.15;margin-bottom:12px}
 .hero h1 em{color:var(--p4);font-style:italic}
 .hero p{color:var(--ink2);font-size:15px;max-width:480px;margin:0 auto}
@@ -131,6 +134,15 @@ select option{background:var(--surface2)}
 <body>
 
 <header class="header">
+  <svg class="logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="36" height="36" rx="10" fill="#13102e"/>
+    <!-- coral wave 1 -->
+    <path d="M6 22 Q9.5 15 13.5 19 Q17.5 23 21.5 17 Q24 13.5 30 12" stroke="#9d8fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- coral wave 2 -->
+    <path d="M6 27 Q10 22 14.5 25 Q19 28 23.5 23 Q26 20.5 30 19" stroke="#7c6af7" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7"/>
+    <!-- dot accent -->
+    <circle cx="30" cy="12" r="2" fill="#bdb4ff"/>
+  </svg>
   <div class="logo">Ka<span>rang</span></div>
   <div class="badge">AI STUDIO</div>
   <div class="hdr-right">
@@ -140,6 +152,14 @@ select option{background:var(--surface2)}
 
 <main class="main">
   <div class="hero">
+    <div class="hero-logo">
+      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="56" height="56" rx="16" fill="#13102e"/>
+        <path d="M9 34 Q14.5 23 21 29 Q27.5 35 34 25 Q37.5 20 47 18" stroke="#9d8fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <path d="M9 42 Q15.5 33 22.5 38 Q29.5 43 36.5 35 Q40 30.5 47 28" stroke="#7c6af7" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <circle cx="47" cy="18" r="3" fill="#bdb4ff"/>
+      </svg>
+    </div>
     <h1>Bikin konten <em>lebih cepat,</em><br>lebih tajam.</h1>
     <p>Masukkan topik, pilih platform — dapat hook, script, caption, dan ide visual siap produksi.</p>
   </div>

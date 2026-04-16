@@ -175,9 +175,15 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .s-num{position:absolute;top:58px;right:76px;font-size:26px;font-weight:700;letter-spacing:2px;color:var(--s-muted)}
 .s-wm{position:absolute;font-family:'Instrument Serif',serif;font-size:480px;line-height:1;color:var(--s-wm);right:-30px;bottom:60px;user-select:none;pointer-events:none}
 .s-bottom{position:absolute;bottom:0;left:0;right:0;height:116px;padding:0 76px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--s-border)}
-.s-bottom-logo img{height:44px;max-width:130px;object-fit:contain;opacity:.75;mix-blend-mode:screen}
-.slide[data-theme="light"] .s-bottom-logo img{mix-blend-mode:multiply;opacity:.6}
-.slide[data-theme="warm"] .s-bottom-logo img{mix-blend-mode:screen;opacity:.7}
+.s-bottom-logo img{height:60px;max-width:160px;object-fit:contain;opacity:.8;mix-blend-mode:screen}
+.slide[data-theme="light"] .s-bottom-logo img{mix-blend-mode:multiply;opacity:.65}
+.slide[data-theme="warm"] .s-bottom-logo img{mix-blend-mode:screen;opacity:.75}
+
+/* WATERMARK tengah slide */
+.s-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:2}
+.s-watermark img{height:280px;max-width:600px;object-fit:contain;opacity:.07;mix-blend-mode:screen}
+.slide[data-theme="light"] .s-watermark img{mix-blend-mode:multiply;opacity:.05}
+.s-watermark-text{font-size:80px;font-weight:800;letter-spacing:6px;color:var(--s-text);opacity:.05;white-space:nowrap;text-transform:uppercase}
 .s-bottom-name{font-size:22px;font-weight:700;color:var(--s-muted);letter-spacing:1px}
 .s-counter{font-size:20px;color:var(--s-muted);font-weight:500}
 
@@ -595,7 +601,10 @@ function buildSlide(s, i, fmtClass, t) {
   const bgHtml = bgEnabled && bgImageUrl
     ? `<img class="s-bg-img" src="${bgImageUrl}" alt="">`
     : '';
-  const base = `<div class="s-bg"></div>${bgHtml}<div class="s-topline"></div><div class="s-num">${num}</div>`;
+  const watermark = brandLogo
+    ? `<div class="s-watermark"><img src="${brandLogo}" alt="wm"></div>`
+    : `<div class="s-watermark"><div class="s-watermark-text">Karang</div></div>`;
+  const base = `<div class="s-bg"></div>${bgHtml}${watermark}<div class="s-topline"></div><div class="s-num">${num}</div>`;
 
   if (s.type === 'hook') {
     el.innerHTML = `${base}

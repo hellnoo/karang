@@ -343,6 +343,12 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       </label>
     </div>
 
+    <div style="margin-bottom:16px">
+      <label>Nama Akun / Handle</label>
+      <input type="text" id="accountName" placeholder="@namaakun atau Nama Brand" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s" oninput="saveAccountName()" onfocus="this.style.borderColor='var(--p5)';this.style.boxShadow='0 0 0 3px rgba(124,106,247,.15)'" onblur="this.style.borderColor='';this.style.boxShadow=''">
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">Dipakai sebagai watermark diagonal di setiap slide</div>
+    </div>
+
     <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
     <div class="logo-upload-row" onclick="document.getElementById('logoInput').click()">
       <div class="logo-preview-box" id="logoPreview"><span style="font-size:20px;opacity:.5">🖼️</span></div>
@@ -431,6 +437,20 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 let platform = 'Instagram', tone = 'Santai & relatable';
 let theme = 'dark', format = '1:1', font = 'elegan';
 let brandLogo = localStorage.getItem('karang_logo') || null;
+let accountName = localStorage.getItem('karang_account') || '';
+
+// Init account name
+if (accountName) document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('accountName');
+  if (el) el.value = accountName;
+});
+document.getElementById('accountName').value = accountName;
+
+function saveAccountName() {
+  accountName = document.getElementById('accountName').value.trim();
+  localStorage.setItem('karang_account', accountName);
+  refreshSlides();
+}
 let slidesData = [], currentSlide = 0;
 let bgImageUrl = null, bgTopic = '';
 
@@ -601,9 +621,8 @@ function buildSlide(s, i, fmtClass, t) {
   const bgHtml = bgEnabled && bgImageUrl
     ? `<img class="s-bg-img" src="${bgImageUrl}" alt="">`
     : '';
-  const watermark = brandLogo
-    ? `<div class="s-watermark"><img src="${brandLogo}" alt="wm"></div>`
-    : `<div class="s-watermark"><div class="s-watermark-text">Karang</div></div>`;
+  const wmText = accountName || 'Karang';
+  const watermark = `<div class="s-watermark"><div class="s-watermark-text">${esc(wmText)}</div></div>`;
   const base = `<div class="s-bg"></div>${bgHtml}${watermark}<div class="s-topline"></div><div class="s-num">${num}</div>`;
 
   if (s.type === 'hook') {

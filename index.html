@@ -489,48 +489,61 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 // ── TRENDING ──────────────────────────────────────
 let selectedTrend = null;
 
+function renderTrendItems(items) {
+  const list = document.getElementById('trendList');
+  list.innerHTML = '';
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'trend-item' + (selectedTrend === item.title ? ' selected' : '');
+    el.innerHTML = `
+      <span class="trend-source">${item.source}</span>
+      <span class="trend-text">${item.title}</span>
+      <span class="trend-use">Pakai →</span>`;
+    el.onclick = () => selectTrend(item.title, el);
+    list.appendChild(el);
+  });
+}
+
 async function loadTrends() {
   const list = document.getElementById('trendList');
+  const label = document.getElementById('trendFilterLabel');
   list.innerHTML = '<div class="trend-loading">Memuat berita terkini...</div>';
+  label.classList.remove('show');
+  document.getElementById('trendSearch').value = '';
   try {
     const res = await fetch('/api/trends');
     const data = await res.json();
     if (!data.items?.length) throw new Error('Kosong');
-    list.innerHTML = '';
-    data.items.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'trend-item' + (selectedTrend === item.title ? ' selected' : '');
-      el.innerHTML = `
-        <span class="trend-source">${item.source}</span>
-        <span class="trend-text">${item.title}</span>
-        <span class="trend-use">Pakai →</span>`;
-      el.onclick = () => selectTrend(item.title, el);
-      list.appendChild(el);
-    });
+    renderTrendItems(data.items);
   } catch {
     list.innerHTML = '<div class="trend-loading" style="color:var(--r5)">Gagal memuat. Coba refresh.</div>';
   }
 }
 
+let searchDebounce;
 function filterTrends(query) {
-  const q = query.trim().toLowerCase();
-  const items = document.querySelectorAll('.trend-item');
+  clearTimeout(searchDebounce);
+  const q = query.trim();
+  if (!q) { loadTrends(); return; }
+  searchDebounce = setTimeout(() => searchTrends(q), 450);
+}
+
+async function searchTrends(query) {
+  const list = document.getElementById('trendList');
   const label = document.getElementById('trendFilterLabel');
   const empty = document.getElementById('trendEmpty');
-  let visible = 0;
-  items.forEach(item => {
-    const text = item.querySelector('.trend-text').textContent.toLowerCase();
-    const match = !q || text.includes(q) || q.split(/\s+/).filter(w => w.length > 2).some(w => text.includes(w));
-    item.style.display = match ? '' : 'none';
-    if (match) visible++;
-  });
-  if (q) {
-    label.textContent = `Menampilkan berita terkait: "${query}"`;
-    label.classList.add('show');
-  } else {
-    label.classList.remove('show');
+  list.innerHTML = '<div class="trend-loading">Mencari berita...</div>';
+  label.textContent = `Hasil pencarian: "${query}"`;
+  label.classList.add('show');
+  empty.classList.remove('show');
+  try {
+    const res = await fetch(`/api/trends?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    renderTrendItems(data.items || []);
+    empty.classList.toggle('show', !(data.items?.length));
+  } catch {
+    list.innerHTML = '<div class="trend-loading" style="color:var(--r5)">Gagal mencari.</div>';
   }
-  empty.classList.toggle('show', visible === 0 && !!q);
 }
 
 function selectTrend(title, el) {

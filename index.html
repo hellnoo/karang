@@ -625,7 +625,7 @@ function buildSlide(s, i, fmtClass, t) {
     el.innerHTML = `${base}
       <div class="s-wm">01</div>
       <div class="s-hook">
-        <div class="s-eyebrow">${esc(platform)}</div>
+        <div class="s-eyebrow">${esc(accountName || 'Karang')}</div>
         <div class="s-hook-hl">${esc(s.headline)}</div>
         <div class="s-divider"></div>
         ${s.body ? `<div class="s-hook-body">${esc(s.body)}</div>` : ''}

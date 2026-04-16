@@ -4,124 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karang — AI Content Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0f;
-  --surface:#13131a;
-  --surface2:#1c1c26;
-  --border:#2a2a38;
-  --border2:#3a3a52;
-  --ink:#f0f0f8;
-  --ink2:#a0a0c0;
-  --muted:#606080;
-  --p5:#7c6af7;
-  --p4:#9d8fff;
-  --p3:#bdb4ff;
-  --p1:#1e1a3f;
-  --a5:#f0883e;
-  --a1:#2a1a08;
-  --g5:#3ecf8e;
-  --g1:#0a2018;
-  --r5:#f06060;
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;
+  --border:#2a2a38;--border2:#3a3a52;
+  --ink:#f0f0f8;--ink2:#a0a0c0;--muted:#606080;
+  --p5:#7c6af7;--p4:#9d8fff;--p3:#bdb4ff;--p1:#1e1a3f;
+  --g5:#3ecf8e;--r5:#f06060;
   --shadow:0 4px 24px rgba(0,0,0,0.4);
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
 
 /* HEADER */
-.header{padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);z-index:100}
+.header{padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);z-index:200}
 .logo-mark{width:36px;height:36px;flex-shrink:0}
 .logo{font-family:'Instrument Serif',serif;font-size:22px;color:var(--p3);letter-spacing:0.5px}
 .logo span{color:var(--p5);font-style:italic}
 .badge{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--p4);background:var(--p1);border:1px solid var(--p5);padding:2px 8px;border-radius:20px}
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.hdr-link{font-size:12px;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:8px;transition:all 0.15s}
-.hdr-link:hover{color:var(--ink2);background:var(--surface2)}
+.hdr-right{margin-left:auto;font-size:12px;color:var(--muted)}
 
-/* MAIN LAYOUT */
-.main{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:40px 24px 80px}
 
 /* HERO */
 .hero{text-align:center;margin-bottom:48px}
 .hero-logo{display:flex;justify-content:center;margin-bottom:20px}
 .hero-logo svg{width:56px;height:56px;filter:drop-shadow(0 8px 24px rgba(124,106,247,0.35))}
-.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(32px,5vw,52px);line-height:1.15;margin-bottom:12px}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(30px,5vw,50px);line-height:1.15;margin-bottom:12px}
 .hero h1 em{color:var(--p4);font-style:italic}
-.hero p{color:var(--ink2);font-size:15px;max-width:480px;margin:0 auto}
+.hero p{color:var(--ink2);font-size:15px;max-width:460px;margin:0 auto}
 
 /* FORM */
 .form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 @media(max-width:560px){.form-row{grid-template-columns:1fr}}
-
 label{display:block;font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase}
-input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;transition:border-color 0.15s,box-shadow 0.15s;outline:none}
-input:focus,textarea:focus,select:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,0.15)}
-textarea{resize:vertical;min-height:80px;line-height:1.6}
-select option{background:var(--surface2)}
+textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;resize:vertical;min-height:80px;line-height:1.6;outline:none;transition:border-color 0.15s,box-shadow 0.15s}
+textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,0.15)}
 
-.tone-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-.tone-btn{font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;transition:all 0.15s}
-.tone-btn:hover{border-color:var(--p5);color:var(--p3)}
-.tone-btn.active{background:var(--p1);border-color:var(--p5);color:var(--p3)}
-
-.generate-btn{width:100%;padding:14px;background:var(--p5);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;letter-spacing:0.3px}
-.generate-btn:hover:not(:disabled){background:var(--p4);transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,106,247,0.3)}
-.generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-
-/* SPINNER */
-.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none}
-.loading .spinner{display:block}
-.loading .btn-text{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* RESULTS */
-.results{display:none}
-.results.show{display:block}
-
-.section-label{font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
-
-/* HOOKS */
-.hooks-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.hook-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;transition:all 0.15s;position:relative}
-.hook-card:hover{border-color:var(--p5);background:var(--surface2)}
-.hook-card.selected{border-color:var(--p5);background:var(--p1)}
-.hook-num{font-size:10px;font-weight:700;color:var(--p4);letter-spacing:1px;margin-bottom:6px}
-.hook-text{font-size:15px;line-height:1.5;color:var(--ink)}
-.hook-copy{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:var(--surface2);border:1px solid var(--border);color:var(--ink2);font-size:11px;padding:4px 10px;border-radius:8px;cursor:pointer;opacity:0;transition:opacity 0.15s}
-.hook-card:hover .hook-copy{opacity:1}
-.hook-copy:hover{color:var(--p3);border-color:var(--p5)}
-
-/* CONTENT CARDS */
-.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
-@media(max-width:640px){.content-grid{grid-template-columns:1fr}}
-
-.content-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--ink2);text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.card-icon{font-size:14px}
-.copy-btn{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:8px;cursor:pointer;transition:all 0.15s}
-.copy-btn:hover{color:var(--p3);border-color:var(--p5)}
-.copy-btn.copied{color:var(--g5);border-color:var(--g5)}
-.card-body{font-size:13.5px;line-height:1.7;color:var(--ink2);white-space:pre-wrap}
-
-/* SCRIPT CARD - FULL WIDTH */
-.script-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:28px}
-.script-body{font-size:14px;line-height:1.8;color:var(--ink);white-space:pre-wrap}
-
-/* VISUAL IDEAS */
-.visual-card{background:linear-gradient(135deg,var(--surface) 0%,rgba(124,106,247,0.05) 100%);border:1px solid var(--border);border-radius:12px;padding:18px}
-.visual-list{list-style:none;display:flex;flex-direction:column;gap:8px}
-.visual-item{font-size:13px;color:var(--ink2);padding:8px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--p5)}
+.pill-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.pill{font-size:12px;font-weight:500;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.pill:hover{border-color:var(--border2);color:var(--ink)}
+.pill.active{background:var(--surface2);border-color:var(--p5);color:var(--p3)}
 
 /* LOGO UPLOAD */
 .logo-upload-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px dashed var(--border2);border-radius:12px;cursor:pointer;transition:all 0.15s;margin-bottom:16px}
 .logo-upload-row:hover{border-color:var(--p5);background:rgba(124,106,247,0.05)}
 .logo-upload-preview{width:44px;height:44px;border-radius:10px;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
 .logo-upload-preview img{width:100%;height:100%;object-fit:contain}
-.logo-upload-preview .placeholder-icon{font-size:20px;opacity:0.5}
 .logo-upload-info{flex:1}
 .logo-upload-info strong{font-size:13px;color:var(--ink);display:block;margin-bottom:2px}
 .logo-upload-info span{font-size:11px;color:var(--muted)}
@@ -130,98 +65,212 @@ select option{background:var(--surface2)}
 .logo-clear:hover{color:var(--r5);border-color:var(--r5)}
 .logo-clear.show{display:block}
 
-/* BRAND BAR di hasil */
-.brand-bar{display:none;align-items:center;gap:10px;padding:12px 16px;background:var(--surface2);border-radius:10px;margin-bottom:20px;border:1px solid var(--border)}
-.brand-bar.show{display:flex}
-.brand-bar img{height:32px;max-width:80px;object-fit:contain;border-radius:6px}
-.brand-bar-label{font-size:11px;color:var(--muted)}
-
-/* ERROR */
 .error-box{background:rgba(240,96,96,0.1);border:1px solid rgba(240,96,96,0.3);color:#f08080;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;display:none}
 .error-box.show{display:block}
 
-/* PLATFORM PILLS */
-.platform-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.platform-btn{font-size:12px;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:5px}
-.platform-btn:hover{border-color:var(--border2);color:var(--ink)}
-.platform-btn.active{background:var(--surface2);border-color:var(--p5);color:var(--p3)}
-.platform-icon{font-size:14px}
+.generate-btn{width:100%;padding:14px;background:var(--p5);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;letter-spacing:0.3px}
+.generate-btn:hover:not(:disabled){background:var(--p4);transform:translateY(-1px);box-shadow:0 8px 24px rgba(124,106,247,0.3)}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none}
+.loading .spinner{display:block}
+.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* FOOTER */
-.footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:60px}
+/* FORMAT MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.show{display:flex}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;max-width:440px;width:100%}
+.modal-title{font-family:'Instrument Serif',serif;font-size:24px;margin-bottom:6px;text-align:center}
+.modal-sub{font-size:13px;color:var(--ink2);text-align:center;margin-bottom:28px}
+.format-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.format-btn{background:var(--surface2);border:2px solid var(--border);border-radius:14px;padding:20px 16px;cursor:pointer;transition:all 0.18s;text-align:center}
+.format-btn:hover{border-color:var(--p5);background:var(--p1)}
+.format-preview{margin:0 auto 12px;background:var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.format-btn[data-fmt="1:1"] .format-preview{width:70px;height:70px}
+.format-btn[data-fmt="9:16"] .format-preview{width:42px;height:70px}
+.format-preview-inner{width:100%;height:100%;background:linear-gradient(145deg,#13102e,#1c1040);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px}
+.format-preview-line{background:rgba(157,143,255,0.6);border-radius:2px;height:3px}
+.format-preview-line:nth-child(1){width:70%}
+.format-preview-line:nth-child(2){width:50%;opacity:0.5}
+.format-preview-line:nth-child(3){width:40%;opacity:0.3}
+.format-label{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.format-desc{font-size:11px;color:var(--muted)}
+.modal-cancel{width:100%;margin-top:16px;padding:10px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:10px;font-size:13px;cursor:pointer;transition:all 0.15s}
+.modal-cancel:hover{border-color:var(--border2);color:var(--ink2)}
+
+/* RESULTS */
+.results{display:none}
+.results.show{display:block}
+
+/* SLIDE SECTION */
+.slides-section{margin-bottom:32px}
+.slides-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.slides-title{font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.slide-count{font-size:12px;color:var(--muted)}
+
+.slide-stage{display:flex;gap:20px;align-items:flex-start}
+@media(max-width:640px){.slide-stage{flex-direction:column;align-items:center}}
+
+/* VIEWPORT */
+.slide-viewport-wrap{position:relative;flex-shrink:0}
+.slide-viewport{overflow:hidden;border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,0.6);position:relative}
+.slide-viewport.fmt-11{width:340px;height:340px}
+.slide-viewport.fmt-916{width:191px;height:340px}
+@media(max-width:640px){
+  .slide-viewport.fmt-11{width:300px;height:300px}
+  .slide-viewport.fmt-916{width:169px;height:300px}
+}
+
+/* SLIDE ELEMENT (full resolution, scaled down) */
+.slide{position:absolute;top:0;left:0;font-family:'Inter',sans-serif;overflow:hidden;display:none}
+.slide.active{display:block}
+.slide.fmt-11{width:1080px;height:1080px;transform-origin:top left;transform:scale(0.3148)}
+.slide.fmt-916{width:1080px;height:1920px;transform-origin:top left;transform:scale(0.1771)}
+@media(max-width:640px){
+  .slide.fmt-11{transform:scale(0.2778)}
+  .slide.fmt-916{transform:scale(0.1563)}
+}
+
+/* SLIDE DESIGN — Gelap Elegan */
+.slide-bg{position:absolute;inset:0;background:linear-gradient(145deg,#08061a 0%,#140f38 55%,#0a0820 100%)}
+.slide-topline{position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#7c6af7,#a78bfa,#6366f1)}
+.slide-noise{position:absolute;inset:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");pointer-events:none}
+.slide-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:90px}
+.slide-num-bg{position:absolute;font-family:'Instrument Serif',serif;font-size:480px;font-weight:700;line-height:1;color:rgba(124,106,247,0.04);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;user-select:none}
+
+/* HOOK SLIDE */
+.slide-hook .slide-inner{text-align:center;align-items:center}
+.slide-hook .s-eyebrow{font-size:22px;font-weight:700;letter-spacing:4px;color:rgba(157,143,255,0.6);text-transform:uppercase;margin-bottom:36px}
+.slide-hook .s-headline{font-family:'Instrument Serif',serif;font-style:italic;font-size:80px;line-height:1.15;color:#fff;margin-bottom:36px}
+.slide-hook .s-divider{width:80px;height:3px;background:linear-gradient(90deg,#7c6af7,#a78bfa);border-radius:2px;margin:0 auto 32px}
+.slide-hook .s-body{font-size:26px;color:rgba(190,185,255,0.75);line-height:1.6;max-width:800px}
+
+/* BODY SLIDE */
+.slide-body .slide-inner{justify-content:center;padding-left:100px;padding-right:90px}
+.slide-body .s-accent{position:absolute;left:0;top:15%;bottom:15%;width:6px;background:linear-gradient(180deg,#7c6af7,transparent)}
+.slide-body .s-num{font-family:'Instrument Serif',serif;font-size:160px;font-weight:700;color:rgba(124,106,247,0.1);line-height:1;margin-bottom:16px}
+.slide-body .s-headline{font-family:'Instrument Serif',serif;font-size:68px;line-height:1.2;color:#fff;margin-bottom:32px}
+.slide-body .s-body{font-size:28px;color:rgba(200,197,255,0.8);line-height:1.75}
+
+/* CTA SLIDE */
+.slide-cta .slide-bg{background:linear-gradient(145deg,#100c2e 0%,#1e1658 55%,#0d0a22 100%)}
+.slide-cta .slide-inner{text-align:center;align-items:center;justify-content:center}
+.slide-cta .s-label{font-size:22px;font-weight:700;letter-spacing:3px;color:rgba(157,143,255,0.6);text-transform:uppercase;margin-bottom:32px}
+.slide-cta .s-headline{font-family:'Instrument Serif',serif;font-style:italic;font-size:76px;line-height:1.2;color:#fff;margin-bottom:28px}
+.slide-cta .s-body{font-size:26px;color:rgba(190,185,255,0.75);line-height:1.6;margin-bottom:48px;max-width:820px}
+.slide-cta .s-cta-pill{background:rgba(124,106,247,0.2);border:2px solid rgba(124,106,247,0.5);color:#bdb4ff;font-size:24px;font-weight:600;padding:20px 48px;border-radius:60px}
+
+/* BRAND LOGO on slide */
+.slide-brand{position:absolute;bottom:60px;right:70px;display:flex;align-items:center;gap:16px}
+.slide-brand img{height:56px;max-width:140px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.75}
+.slide-brand-name{font-size:22px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:1px}
+
+/* SLIDE NAV */
+.slide-nav{display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.slide-thumb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.15s;border:1px solid transparent}
+.slide-thumb:hover{background:var(--surface2)}
+.slide-thumb.active{background:var(--p1);border-color:var(--p5)}
+.thumb-preview{width:32px;height:32px;border-radius:5px;background:linear-gradient(145deg,#13102e,#1c1040);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.thumb-preview.fmt-916{width:18px;height:32px}
+.thumb-num{font-size:10px;font-weight:800;color:rgba(157,143,255,0.6)}
+.thumb-info{}
+.thumb-type{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--p4);margin-bottom:1px}
+.thumb-text{font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+
+/* ARROWS */
+.slide-arrows{display:flex;gap:8px;margin-top:12px}
+.arrow-btn{width:36px;height:36px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--ink2);font-size:16px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center}
+.arrow-btn:hover:not(:disabled){border-color:var(--p5);color:var(--p3)}
+.arrow-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+/* DOWNLOAD BAR */
+.download-bar{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.dl-btn{flex:1;min-width:140px;padding:11px 16px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:7px;border:none}
+.dl-btn-primary{background:var(--p5);color:#fff}
+.dl-btn-primary:hover{background:var(--p4)}
+.dl-btn-secondary{background:var(--surface2);color:var(--ink2);border:1px solid var(--border)}
+.dl-btn-secondary:hover{border-color:var(--p5);color:var(--p3)}
+.dl-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+/* CAPTION / HASHTAG */
+.text-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media(max-width:600px){.text-grid{grid-template-columns:1fr}}
+.text-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-title{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--ink2);text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.copy-btn{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:8px;cursor:pointer;transition:all 0.15s}
+.copy-btn:hover{color:var(--p3);border-color:var(--p5)}
+.copy-btn.copied{color:var(--g5);border-color:var(--g5)}
+.card-body{font-size:13px;line-height:1.7;color:var(--ink2);white-space:pre-wrap}
+
+/* EXPORT AREA (hidden, full resolution) */
+#exportArea{position:fixed;left:-99999px;top:0;pointer-events:none;opacity:0}
+
+footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:60px}
 </style>
 </head>
 <body>
 
 <header class="header">
-  <svg class="logo-mark" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg class="logo-mark" viewBox="0 0 36 36" fill="none">
     <rect width="36" height="36" rx="10" fill="#13102e"/>
-    <!-- coral wave 1 -->
-    <path d="M6 22 Q9.5 15 13.5 19 Q17.5 23 21.5 17 Q24 13.5 30 12" stroke="#9d8fff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-    <!-- coral wave 2 -->
-    <path d="M6 27 Q10 22 14.5 25 Q19 28 23.5 23 Q26 20.5 30 19" stroke="#7c6af7" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7"/>
-    <!-- dot accent -->
+    <path d="M6 22 Q9.5 15 13.5 19 Q17.5 23 21.5 17 Q24 13.5 30 12" stroke="#9d8fff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M6 27 Q10 22 14.5 25 Q19 28 23.5 23 Q26 20.5 30 19" stroke="#7c6af7" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
     <circle cx="30" cy="12" r="2" fill="#bdb4ff"/>
   </svg>
   <div class="logo">Ka<span>rang</span></div>
   <div class="badge">AI STUDIO</div>
-  <div class="hdr-right">
-    <span style="font-size:12px;color:var(--muted)">Script & Hook Generator</span>
-  </div>
+  <div class="hdr-right">Slide Generator</div>
 </header>
 
 <main class="main">
   <div class="hero">
     <div class="hero-logo">
-      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 56 56" fill="none">
         <rect width="56" height="56" rx="16" fill="#13102e"/>
-        <path d="M9 34 Q14.5 23 21 29 Q27.5 35 34 25 Q37.5 20 47 18" stroke="#9d8fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-        <path d="M9 42 Q15.5 33 22.5 38 Q29.5 43 36.5 35 Q40 30.5 47 28" stroke="#7c6af7" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M9 34 Q14.5 23 21 29 Q27.5 35 34 25 Q37.5 20 47 18" stroke="#9d8fff" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M9 42 Q15.5 33 22.5 38 Q29.5 43 36.5 35 Q40 30.5 47 28" stroke="#7c6af7" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
         <circle cx="47" cy="18" r="3" fill="#bdb4ff"/>
       </svg>
     </div>
-    <h1>Bikin konten <em>lebih cepat,</em><br>lebih tajam.</h1>
-    <p>Masukkan topik, pilih platform — dapat hook, script, caption, dan ide visual siap produksi.</p>
+    <h1>Topik masuk,<br><em>slide konten keluar.</em></h1>
+    <p>Isi topik — Karang buatkan slide carousel siap upload lengkap dengan caption dan hashtag.</p>
   </div>
 
+  <!-- FORM -->
   <div class="form-card">
     <div style="margin-bottom:16px">
       <label>Topik / Ide Konten</label>
-      <textarea id="topic" placeholder="Contoh: cara menabung 1 juta per bulan untuk fresh graduate, tips belajar coding dari nol, review jujur aplikasi X..." rows="3"></textarea>
+      <textarea id="topic" placeholder="Contoh: cara menabung 1 juta per bulan untuk fresh graduate, tips filter beans kopi specialty, review jujur aplikasi X..." rows="3"></textarea>
     </div>
 
     <div class="form-row">
       <div>
         <label>Platform</label>
-        <div class="platform-grid" id="platformGrid">
-          <button class="platform-btn active" data-val="Instagram Reels"><span class="platform-icon">📸</span>IG Reels</button>
-          <button class="platform-btn" data-val="TikTok"><span class="platform-icon">🎵</span>TikTok</button>
-          <button class="platform-btn" data-val="YouTube Shorts"><span class="platform-icon">▶️</span>YT Shorts</button>
-          <button class="platform-btn" data-val="Twitter/X Thread"><span class="platform-icon">𝕏</span>Thread</button>
-          <button class="platform-btn" data-val="LinkedIn"><span class="platform-icon">💼</span>LinkedIn</button>
+        <div class="pill-grid" id="platformGrid">
+          <button class="pill active" data-val="Instagram"><span>📸</span>Instagram</button>
+          <button class="pill" data-val="LinkedIn"><span>💼</span>LinkedIn</button>
+          <button class="pill" data-val="TikTok"><span>🎵</span>TikTok</button>
         </div>
       </div>
       <div>
         <label>Tone / Gaya</label>
-        <div class="tone-grid" id="toneGrid">
-          <button class="tone-btn active" data-val="Santai & relatable">Santai</button>
-          <button class="tone-btn" data-val="Edukatif & informatif">Edukatif</button>
-          <button class="tone-btn" data-val="Motivasi & inspiring">Motivasi</button>
-          <button class="tone-btn" data-val="Humor & entertaining">Humor</button>
-          <button class="tone-btn" data-val="Profesional & authority">Profesional</button>
+        <div class="pill-grid" id="toneGrid">
+          <button class="pill active" data-val="Santai & relatable">Santai</button>
+          <button class="pill" data-val="Edukatif & informatif">Edukatif</button>
+          <button class="pill" data-val="Motivasi & inspiring">Motivasi</button>
+          <button class="pill" data-val="Humor & entertaining">Humor</button>
+          <button class="pill" data-val="Profesional & authority">Profesional</button>
         </div>
       </div>
     </div>
 
-    <!-- Logo Upload -->
     <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogoUpload(event)">
     <div class="logo-upload-row" onclick="document.getElementById('logoInput').click()">
-      <div class="logo-upload-preview" id="logoPreview">
-        <span class="placeholder-icon">🖼️</span>
-      </div>
+      <div class="logo-upload-preview" id="logoPreview"><span style="font-size:20px;opacity:.5">🖼️</span></div>
       <div class="logo-upload-info">
         <strong id="logoName">Upload Logo Brand</strong>
-        <span>PNG, JPG, SVG — akan muncul di hasil generate</span>
+        <span>Muncul di setiap slide — PNG, JPG, SVG</span>
       </div>
       <span class="logo-upload-btn">Pilih File</span>
       <button class="logo-clear" id="logoClear" onclick="clearLogo(event)">Hapus</button>
@@ -229,72 +278,118 @@ select option{background:var(--surface2)}
 
     <div id="errorBox" class="error-box"></div>
 
-    <button class="generate-btn" id="generateBtn" onclick="generate()">
+    <button class="generate-btn" id="generateBtn" onclick="openFormatModal()">
       <div class="spinner" id="spinner"></div>
-      <span class="btn-text" id="btnText">✦ Generate Konten</span>
+      <span class="btn-text">✦ Generate Slide</span>
     </button>
   </div>
 
   <!-- RESULTS -->
   <div class="results" id="results">
-
-    <div class="brand-bar" id="brandBar">
-      <img id="brandLogoImg" src="" alt="logo">
-      <span class="brand-bar-label">Logo brand kamu akan muncul bersama konten ini</span>
+    <div class="slides-section">
+      <div class="slides-header">
+        <span class="slides-title">Preview Slide</span>
+        <span class="slide-count" id="slideCount"></span>
+      </div>
+      <div class="slide-stage">
+        <div class="slide-viewport-wrap">
+          <div class="slide-viewport" id="slideViewport"></div>
+          <div class="slide-arrows">
+            <button class="arrow-btn" id="prevBtn" onclick="changeSlide(-1)">←</button>
+            <button class="arrow-btn" id="nextBtn" onclick="changeSlide(1)">→</button>
+          </div>
+          <div class="download-bar">
+            <button class="dl-btn dl-btn-primary" onclick="downloadCurrent()" id="dlCurrent">⬇ Download Slide Ini</button>
+            <button class="dl-btn dl-btn-secondary" onclick="downloadAll()" id="dlAll">⬇ Download Semua (ZIP)</button>
+          </div>
+        </div>
+        <div class="slide-nav" id="slideNav"></div>
+      </div>
     </div>
 
-    <div class="section-label">Pilih Hook Terbaik</div>
-    <div class="hooks-grid" id="hooksGrid"></div>
-
-    <div class="content-grid">
-      <div class="content-card">
+    <div class="text-grid">
+      <div class="text-card">
         <div class="card-head">
-          <div class="card-title"><span class="card-icon">💬</span> Caption</div>
-          <button class="copy-btn" onclick="copyCard(this,'caption')">Salin</button>
+          <div class="card-title">💬 Caption</div>
+          <button class="copy-btn" onclick="copyEl(this,'caption')">Salin</button>
         </div>
         <div class="card-body" id="caption"></div>
       </div>
-      <div class="content-card">
+      <div class="text-card">
         <div class="card-head">
-          <div class="card-title"><span class="card-icon">#</span> Hashtag</div>
-          <button class="copy-btn" onclick="copyCard(this,'hashtags')">Salin</button>
+          <div class="card-title"># Hashtag</div>
+          <button class="copy-btn" onclick="copyEl(this,'hashtags')">Salin</button>
         </div>
         <div class="card-body" id="hashtags"></div>
       </div>
     </div>
-
-    <div class="script-card">
-      <div class="card-head">
-        <div class="card-title"><span class="card-icon">📝</span> Script Lengkap</div>
-        <button class="copy-btn" onclick="copyCard(this,'script')">Salin</button>
-      </div>
-      <div class="script-body" id="script"></div>
-    </div>
-
-    <div class="visual-card">
-      <div class="card-head">
-        <div class="card-title"><span class="card-icon">🎬</span> Ide Visual / B-Roll</div>
-      </div>
-      <ul class="visual-list" id="visualList"></ul>
-    </div>
-
   </div>
 </main>
 
-<footer class="footer">Karang — AI Content Studio · Powered by OpenRouter</footer>
+<!-- FORMAT MODAL -->
+<div class="modal-overlay" id="formatModal">
+  <div class="modal-card">
+    <div class="modal-title">Pilih Format Slide</div>
+    <div class="modal-sub">Sesuaikan dengan platform tujuan kamu</div>
+    <div class="format-grid">
+      <button class="format-btn" data-fmt="1:1" onclick="selectFormat('1:1')">
+        <div class="format-preview">
+          <div class="format-preview-inner">
+            <div class="format-preview-line"></div>
+            <div class="format-preview-line"></div>
+            <div class="format-preview-line"></div>
+          </div>
+        </div>
+        <div class="format-label">Square 1:1</div>
+        <div class="format-desc">IG Feed · LinkedIn</div>
+      </button>
+      <button class="format-btn" data-fmt="9:16" onclick="selectFormat('9:16')">
+        <div class="format-preview">
+          <div class="format-preview-inner">
+            <div class="format-preview-line"></div>
+            <div class="format-preview-line"></div>
+            <div class="format-preview-line"></div>
+          </div>
+        </div>
+        <div class="format-label">Vertikal 9:16</div>
+        <div class="format-desc">Reels · TikTok · Stories</div>
+      </button>
+    </div>
+    <button class="modal-cancel" onclick="closeFormatModal()">Batal</button>
+  </div>
+</div>
+
+<!-- EXPORT AREA (hidden) -->
+<div id="exportArea"></div>
+
+<footer>Karang — AI Content Studio · Powered by OpenRouter</footer>
 
 <script>
-// State
-let platform = 'Instagram Reels';
+// ─── STATE ───────────────────────────────────────────
+let platform = 'Instagram';
 let tone = 'Santai & relatable';
+let format = '1:1';
 let brandLogo = localStorage.getItem('karang_logo') || null;
+let slidesData = [];
+let currentSlide = 0;
 
-// Init logo on load
 if (brandLogo) applyLogo(brandLogo);
 
+// ─── PILL SELECTORS ───────────────────────────────────
+document.getElementById('platformGrid').addEventListener('click', e => {
+  const b = e.target.closest('.pill'); if (!b) return;
+  document.querySelectorAll('#platformGrid .pill').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); platform = b.dataset.val;
+});
+document.getElementById('toneGrid').addEventListener('click', e => {
+  const b = e.target.closest('.pill'); if (!b) return;
+  document.querySelectorAll('#toneGrid .pill').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); tone = b.dataset.val;
+});
+
+// ─── LOGO UPLOAD ─────────────────────────────────────
 function handleLogoUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
     brandLogo = ev.target.result;
@@ -303,77 +398,46 @@ function handleLogoUpload(e) {
   };
   reader.readAsDataURL(file);
 }
-
 function applyLogo(src, name) {
-  const preview = document.getElementById('logoPreview');
-  preview.innerHTML = `<img src="${src}" alt="logo">`;
+  document.getElementById('logoPreview').innerHTML = `<img src="${src}" alt="logo">`;
   document.getElementById('logoName').textContent = name || 'Logo tersimpan';
   document.getElementById('logoClear').classList.add('show');
 }
-
 function clearLogo(e) {
   e.stopPropagation();
   brandLogo = null;
   localStorage.removeItem('karang_logo');
-  document.getElementById('logoPreview').innerHTML = '<span class="placeholder-icon">🖼️</span>';
+  document.getElementById('logoPreview').innerHTML = '<span style="font-size:20px;opacity:.5">🖼️</span>';
   document.getElementById('logoName').textContent = 'Upload Logo Brand';
   document.getElementById('logoClear').classList.remove('show');
-  document.getElementById('brandBar').classList.remove('show');
   document.getElementById('logoInput').value = '';
 }
 
-// Platform select
-document.getElementById('platformGrid').addEventListener('click', e => {
-  const btn = e.target.closest('.platform-btn');
-  if (!btn) return;
-  document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  platform = btn.dataset.val;
-});
-
-// Tone select
-document.getElementById('toneGrid').addEventListener('click', e => {
-  const btn = e.target.closest('.tone-btn');
-  if (!btn) return;
-  document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  tone = btn.dataset.val;
-});
-
-// Copy individual hook
-function copyHook(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = 'Disalin!';
-    setTimeout(() => btn.textContent = 'Salin', 1500);
-  });
+// ─── FORMAT MODAL ─────────────────────────────────────
+function openFormatModal() {
+  const topic = document.getElementById('topic').value.trim();
+  if (!topic) { showError('Masukkan topik dulu ya!'); return; }
+  hideError();
+  document.getElementById('formatModal').classList.add('show');
+}
+function closeFormatModal() {
+  document.getElementById('formatModal').classList.remove('show');
+}
+async function selectFormat(fmt) {
+  format = fmt;
+  closeFormatModal();
+  await generate();
 }
 
-// Copy card
-function copyCard(btn, id) {
-  const el = document.getElementById(id);
-  navigator.clipboard.writeText(el.textContent).then(() => {
-    btn.textContent = 'Disalin!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Salin'; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-// Generate
+// ─── GENERATE ─────────────────────────────────────────
 async function generate() {
   const topic = document.getElementById('topic').value.trim();
-  if (!topic) {
-    showError('Masukkan topik dulu ya!');
-    return;
-  }
-
   setLoading(true);
-  hideError();
-
   try {
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, platform, tone })
+      body: JSON.stringify({ topic, platform, tone, format })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -385,76 +449,203 @@ async function generate() {
   }
 }
 
+// ─── RENDER RESULTS ───────────────────────────────────
 function renderResults(data) {
-  // Brand logo
-  const brandBar = document.getElementById('brandBar');
-  if (brandLogo) {
-    document.getElementById('brandLogoImg').src = brandLogo;
-    brandBar.classList.add('show');
-  } else {
-    brandBar.classList.remove('show');
-  }
+  slidesData = data.slides || [];
+  currentSlide = 0;
 
-  // Hooks
-  const grid = document.getElementById('hooksGrid');
-  grid.innerHTML = '';
-  (data.hooks || []).forEach((h, i) => {
-    const div = document.createElement('div');
-    div.className = 'hook-card' + (i === 0 ? ' selected' : '');
-    div.innerHTML = `
-      <div class="hook-num">HOOK ${i + 1}</div>
-      <div class="hook-text">${escHtml(h)}</div>
-      <button class="hook-copy" onclick="copyHook(${JSON.stringify(h)},this)">Salin</button>
-    `;
-    div.addEventListener('click', () => {
-      document.querySelectorAll('.hook-card').forEach(c => c.classList.remove('selected'));
-      div.classList.add('selected');
-    });
-    grid.appendChild(div);
+  const viewport = document.getElementById('slideViewport');
+  const nav = document.getElementById('slideNav');
+  const fmtClass = format === '9:16' ? 'fmt-916' : 'fmt-11';
+
+  // Set viewport size
+  viewport.className = `slide-viewport ${fmtClass}`;
+  viewport.innerHTML = '';
+  nav.innerHTML = '';
+
+  // Render each slide
+  slidesData.forEach((s, i) => {
+    // Slide element
+    const el = buildSlide(s, i, fmtClass);
+    if (i === 0) el.classList.add('active');
+    viewport.appendChild(el);
+
+    // Thumbnail
+    const thumb = document.createElement('div');
+    thumb.className = 'slide-thumb' + (i === 0 ? ' active' : '');
+    thumb.innerHTML = `
+      <div class="thumb-preview ${fmtClass}"><span class="thumb-num">0${i+1}</span></div>
+      <div class="thumb-info">
+        <div class="thumb-type">${s.type === 'hook' ? 'Hook' : s.type === 'cta' ? 'CTA' : `Slide ${i+1}`}</div>
+        <div class="thumb-text">${esc(s.headline)}</div>
+      </div>`;
+    thumb.onclick = () => goToSlide(i);
+    nav.appendChild(thumb);
   });
 
-  // Caption, hashtags, script
+  document.getElementById('slideCount').textContent = `${slidesData.length} slide`;
   document.getElementById('caption').textContent = data.caption || '';
   document.getElementById('hashtags').textContent = data.hashtags || '';
-  document.getElementById('script').textContent = data.script || '';
 
-  // Visual ideas
-  const vl = document.getElementById('visualList');
-  vl.innerHTML = '';
-  (data.visual_ideas || []).forEach(v => {
-    const li = document.createElement('li');
-    li.className = 'visual-item';
-    li.textContent = v;
-    vl.appendChild(li);
-  });
-
+  updateArrows();
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+function buildSlide(s, i, fmtClass) {
+  const el = document.createElement('div');
+  el.className = `slide ${fmtClass} slide-${s.type}`;
+  el.dataset.index = i;
+
+  const brandHtml = brandLogo
+    ? `<div class="slide-brand"><img src="${brandLogo}" alt="brand"></div>`
+    : `<div class="slide-brand"><span class="slide-brand-name">Karang</span></div>`;
+
+  const numStr = String(i + 1).padStart(2, '0');
+
+  if (s.type === 'hook') {
+    el.innerHTML = `
+      <div class="slide-bg"></div>
+      <div class="slide-topline"></div>
+      <div class="slide-noise"></div>
+      <div class="slide-num-bg">${numStr}</div>
+      <div class="slide-inner">
+        <div class="s-eyebrow">${esc(platform)} · ${esc(tone.split(' ')[0])}</div>
+        <div class="s-headline">${esc(s.headline)}</div>
+        <div class="s-divider"></div>
+        ${s.body ? `<div class="s-body">${esc(s.body)}</div>` : ''}
+      </div>
+      ${brandHtml}`;
+  } else if (s.type === 'cta') {
+    el.innerHTML = `
+      <div class="slide-bg"></div>
+      <div class="slide-topline"></div>
+      <div class="slide-noise"></div>
+      <div class="slide-inner">
+        <div class="s-label">Saatnya bertindak</div>
+        <div class="s-headline">${esc(s.headline)}</div>
+        ${s.body ? `<div class="s-body">${esc(s.body)}</div>` : ''}
+        <div class="s-cta-pill">Simpan & Share 🔖</div>
+      </div>
+      ${brandHtml}`;
+  } else {
+    el.innerHTML = `
+      <div class="slide-bg"></div>
+      <div class="slide-topline"></div>
+      <div class="slide-noise"></div>
+      <div class="slide-inner">
+        <div class="s-accent"></div>
+        <div class="s-num">${numStr}</div>
+        <div class="s-headline">${esc(s.headline)}</div>
+        ${s.body ? `<div class="s-body">${esc(s.body)}</div>` : ''}
+      </div>
+      ${brandHtml}`;
+  }
+  return el;
+}
+
+// ─── NAVIGATION ───────────────────────────────────────
+function goToSlide(idx) {
+  const slides = document.querySelectorAll('#slideViewport .slide');
+  const thumbs = document.querySelectorAll('#slideNav .slide-thumb');
+  slides[currentSlide]?.classList.remove('active');
+  thumbs[currentSlide]?.classList.remove('active');
+  currentSlide = idx;
+  slides[currentSlide]?.classList.add('active');
+  thumbs[currentSlide]?.classList.add('active');
+  thumbs[currentSlide]?.scrollIntoView({ block: 'nearest' });
+  updateArrows();
+}
+function changeSlide(dir) { goToSlide(currentSlide + dir); }
+function updateArrows() {
+  document.getElementById('prevBtn').disabled = currentSlide === 0;
+  document.getElementById('nextBtn').disabled = currentSlide === slidesData.length - 1;
+}
+
+// ─── DOWNLOAD ─────────────────────────────────────────
+async function renderSlideToCanvas(idx) {
+  // Build full-res slide in export area
+  const area = document.getElementById('exportArea');
+  area.innerHTML = '';
+  const fmtClass = format === '9:16' ? 'fmt-916' : 'fmt-11';
+  const el = buildSlide(slidesData[idx], idx, fmtClass);
+  el.style.display = 'block';
+  el.style.transform = 'none';
+  el.style.position = 'relative';
+  area.appendChild(el);
+
+  const w = format === '9:16' ? 1080 : 1080;
+  const h = format === '9:16' ? 1920 : 1080;
+
+  await document.fonts.ready;
+  const canvas = await html2canvas(el, {
+    width: w, height: h, scale: 1,
+    useCORS: true, allowTaint: true,
+    backgroundColor: null, logging: false
+  });
+  area.innerHTML = '';
+  return canvas;
+}
+
+async function downloadCurrent() {
+  const btn = document.getElementById('dlCurrent');
+  btn.disabled = true; btn.textContent = 'Rendering...';
+  try {
+    const canvas = await renderSlideToCanvas(currentSlide);
+    const link = document.createElement('a');
+    link.download = `karang-slide-${String(currentSlide+1).padStart(2,'0')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } finally {
+    btn.disabled = false; btn.innerHTML = '⬇ Download Slide Ini';
+  }
+}
+
+async function downloadAll() {
+  const btn = document.getElementById('dlAll');
+  btn.disabled = true;
+  try {
+    const zip = new JSZip();
+    for (let i = 0; i < slidesData.length; i++) {
+      btn.textContent = `Rendering ${i+1}/${slidesData.length}...`;
+      const canvas = await renderSlideToCanvas(i);
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+      zip.file(`slide-${String(i+1).padStart(2,'0')}.png`, blob);
+    }
+    btn.textContent = 'Menyiapkan ZIP...';
+    const content = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.download = 'karang-slides.zip';
+    link.href = URL.createObjectURL(content);
+    link.click();
+  } finally {
+    btn.disabled = false; btn.innerHTML = '⬇ Download Semua (ZIP)';
+  }
+}
+
+// ─── UTILS ────────────────────────────────────────────
+function copyEl(btn, id) {
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+    btn.textContent = 'Disalin!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Salin'; btn.classList.remove('copied'); }, 1500);
+  });
+}
 function setLoading(on) {
   const btn = document.getElementById('generateBtn');
   btn.disabled = on;
   btn.classList.toggle('loading', on);
 }
-
 function showError(msg) {
   const el = document.getElementById('errorBox');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
 }
-
-function hideError() {
-  document.getElementById('errorBox').classList.remove('show');
-}
-
-function escHtml(s) {
+function hideError() { document.getElementById('errorBox').classList.remove('show'); }
+function esc(s = '') {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// Enter key on textarea
 document.getElementById('topic').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generate();
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) openFormatModal();
 });
 </script>
 </body>

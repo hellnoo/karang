@@ -1,7 +1,11 @@
 const MODELS = [
+  'deepseek/deepseek-chat-v3-0324:free',
+  'google/gemma-3-27b-it:free',
+  'openai/gpt-oss-20b:free',
   'meta-llama/llama-3.3-70b-instruct:free',
+  'qwen/qwen3-8b:free',
+  'mistralai/mistral-small-3.1-24b-instruct:free',
   'nousresearch/hermes-3-llama-3.1-405b:free',
-  'nvidia/nemotron-3-super-120b-a12b:free',
   'meta-llama/llama-3.2-3b-instruct:free',
 ];
 
@@ -74,8 +78,8 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           model,
           messages: [{ role: 'system', content: SYSTEM }, ...messages],
-          temperature: 0.85,
-          max_tokens: 2000,
+          temperature: 0.8,
+          max_tokens: 1500,
         }),
       });
 

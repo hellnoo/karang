@@ -265,6 +265,14 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .trend-use{font-size:10px;color:var(--p4);font-weight:600;flex-shrink:0;margin-top:2px;opacity:0;transition:opacity .15s}
 .trend-item:hover .trend-use,.trend-item.selected .trend-use{opacity:1}
 .trend-loading{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+.trend-search-wrap{position:relative;margin-bottom:14px}
+.trend-search{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:9px 36px 9px 14px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s}
+.trend-search:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)}
+.trend-search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.trend-filter-label{font-size:11px;color:var(--p4);margin-bottom:10px;display:none}
+.trend-filter-label.show{display:block}
+.trend-empty{text-align:center;padding:16px;color:var(--muted);font-size:13px;display:none}
+.trend-empty.show{display:block}
 .trend-selected-bar{display:none;align-items:center;gap:10px;padding:10px 14px;background:var(--p1);border:1px solid var(--p5);border-radius:10px;margin-top:12px;font-size:12px;color:var(--p3)}
 .trend-selected-bar.show{display:flex}
 .trend-selected-bar span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -311,9 +319,15 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       </div>
       <button class="trend-refresh" onclick="loadTrends()">↻ Refresh</button>
     </div>
+    <div class="trend-search-wrap">
+      <input class="trend-search" id="trendSearch" type="text" placeholder="Cari berita..." oninput="filterTrends(this.value)">
+      <span class="trend-search-icon">🔍</span>
+    </div>
+    <div class="trend-filter-label" id="trendFilterLabel"></div>
     <div id="trendList" class="trend-list">
       <div class="trend-loading">Memuat berita terkini...</div>
     </div>
+    <div class="trend-empty" id="trendEmpty">Tidak ada berita yang cocok.</div>
     <div class="trend-selected-bar" id="trendSelectedBar">
       <span id="trendSelectedText"></span>
       <span class="trend-clear" onclick="clearTrend()" title="Hapus">✕</span>
@@ -496,6 +510,27 @@ async function loadTrends() {
   } catch {
     list.innerHTML = '<div class="trend-loading" style="color:var(--r5)">Gagal memuat. Coba refresh.</div>';
   }
+}
+
+function filterTrends(query) {
+  const q = query.trim().toLowerCase();
+  const items = document.querySelectorAll('.trend-item');
+  const label = document.getElementById('trendFilterLabel');
+  const empty = document.getElementById('trendEmpty');
+  let visible = 0;
+  items.forEach(item => {
+    const text = item.querySelector('.trend-text').textContent.toLowerCase();
+    const match = !q || text.includes(q) || q.split(/\s+/).filter(w => w.length > 2).some(w => text.includes(w));
+    item.style.display = match ? '' : 'none';
+    if (match) visible++;
+  });
+  if (q) {
+    label.textContent = `Menampilkan berita terkait: "${query}"`;
+    label.classList.add('show');
+  } else {
+    label.classList.remove('show');
+  }
+  empty.classList.toggle('show', visible === 0 && !!q);
 }
 
 function selectTrend(title, el) {
@@ -814,6 +849,22 @@ function setLoading(on) {
 function showError(msg) { const el = document.getElementById('errorBox'); el.textContent = msg; el.classList.add('show'); }
 function hideError() { document.getElementById('errorBox').classList.remove('show'); }
 function esc(s = '') { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Auto-filter berita ikut topik (debounced)
+let trendDebounce;
+document.getElementById('topic').addEventListener('input', e => {
+  clearTimeout(trendDebounce);
+  trendDebounce = setTimeout(() => {
+    const q = e.target.value.trim();
+    const searchEl = document.getElementById('trendSearch');
+    if (q.length > 2) {
+      searchEl.value = q;
+      filterTrends(q);
+    } else if (!searchEl.value) {
+      filterTrends('');
+    }
+  }, 400);
+});
 
 document.getElementById('topic').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) openFormatModal();

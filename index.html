@@ -176,7 +176,10 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .s-num{position:absolute;top:58px;right:76px;font-size:26px;font-weight:700;letter-spacing:2px;color:var(--s-muted)}
 .s-wm{position:absolute;font-family:'Instrument Serif',serif;font-size:480px;line-height:1;color:var(--s-wm);right:-30px;bottom:60px;user-select:none;pointer-events:none}
 .s-bottom{position:absolute;bottom:0;left:0;right:0;height:116px;padding:0 76px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--s-border)}
-.s-bottom-logo img{height:60px;max-width:160px;object-fit:contain}
+.s-bottom-logo{display:flex;align-items:center;gap:14px}
+.s-logo-badge{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:6px 10px;backdrop-filter:blur(6px)}
+.s-logo-badge img{height:48px;max-width:140px;object-fit:contain;display:block}
+.slide[data-theme="light"] .s-logo-badge{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.12)}
 
 /* ACCOUNT NAME di bottom bar */
 .s-bottom-account{font-size:20px;font-weight:600;color:var(--s-muted);letter-spacing:.5px}
@@ -911,31 +914,23 @@ function buildSlide(s, i, fmtClass, t) {
   const total = slidesData.length;
   const num = String(i + 1).padStart(2, '0');
 
-  // Smart logo blend: deteksi bg logo → pilih blend mode yang tepat
-  // Saturation filter: sesuaikan tone logo ke tema aktif
-  let logoStyle = '';
+  // Logo rendering: frosted glass badge untuk semua jenis logo
+  // Blend mode hanya untuk transparent logos tanpa badge
+  const bgType = localStorage.getItem('karang_logo_bg') || 'transparent';
+  let brand;
   if (brandLogo) {
-    const bgType = localStorage.getItem('karang_logo_bg') || 'transparent';
-    let blend, op;
-    if (bgType === 'light')       { blend = 'multiply'; op = .85; }
-    else if (bgType === 'dark')   { blend = 'screen';   op = .90; }
-    else if (bgType === 'colored'){ blend = 'multiply'; op = .80; }
-    else /* transparent */        { blend = t === 'light' ? 'multiply' : 'screen'; op = .85; }
-
-    // Filter saturation & tone per tema — biar logo nyambung sama palet slide
-    const toneFilter = {
-      dark:  'saturate(.72) brightness(1.05)',
-      light: 'saturate(.68) brightness(.92)',
-      bold:  'saturate(.75) contrast(1.08)',
-      warm:  'saturate(.78) sepia(.12)',
-      brand: 'saturate(1)',
-    }[t] || 'saturate(.75)';
-
-    logoStyle = `style="mix-blend-mode:${blend};opacity:${op};filter:${toneFilter}"`;
+    if (bgType === 'transparent') {
+      // Logo transparan: langsung tanpa badge, pakai blend mode
+      const blend = t === 'light' ? 'multiply' : 'screen';
+      brand = `<img src="${brandLogo}" alt="brand" style="height:56px;max-width:150px;object-fit:contain;mix-blend-mode:${blend};opacity:.9">`;
+    } else {
+      // Logo dengan background (light/dark/colored): frosted glass badge
+      // Preserve warna logo asli, container yang menyesuaikan tema
+      brand = `<div class="s-logo-badge"><img src="${brandLogo}" alt="brand"></div>`;
+    }
+  } else {
+    brand = `<span class="s-bottom-name">Karang</span>`;
   }
-  const brand = brandLogo
-    ? `<img src="${brandLogo}" alt="brand" ${logoStyle}>`
-    : `<span class="s-bottom-name">Karang</span>`;
   const acct = accountName ? `<div class="s-bottom-account">${esc(accountName)}</div>` : '';
   const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}${acct}</div><div class="s-counter">${i+1} / ${total}</div></div>`;
   const bgEnabled = document.getElementById('bgToggle').checked;

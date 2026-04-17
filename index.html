@@ -142,7 +142,7 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .slide[data-font="luxury"]   {--s-fh:'Cormorant Garamond';--s-fb:'Outfit';--s-fi:italic}
 
 /* ── BACKGROUND IMAGE ────────────────────────────── */
-.s-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.13;filter:blur(2px) saturate(.5);mix-blend-mode:luminosity;pointer-events:none}
+.s-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.10;filter:blur(8px) saturate(.4);mix-blend-mode:luminosity;pointer-events:none}
 
 /* ── SLIDE THEMES (CSS variables) ───────────────── */
 .slide[data-theme="dark"]{
@@ -599,7 +599,7 @@ async function fetchBgImage(topic) {
   const el = document.getElementById('bgToggle');
   if (!el.checked) return null;
   const w = 1080, h = format === '9:16' ? 1920 : 1080;
-  const prompt = encodeURIComponent(`minimal atmospheric ${topic} abstract blurred background cinematic mood no text no words no logo`);
+  const prompt = encodeURIComponent(`cinematic abstract texture background inspired by "${topic}", bokeh blur, no text, no words, no letters, no typography, no watermark, soft light, minimal`);
   const seed = Math.floor(Math.random() * 9999);
   const url = `https://image.pollinations.ai/prompt/${prompt}?width=${w}&height=${h}&nologo=true&seed=${seed}`;
   try {

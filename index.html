@@ -378,7 +378,7 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
         <button class="theme-pill" data-val="light"><span class="theme-dot td-light"></span>Terang</button>
         <button class="theme-pill" data-val="bold"><span class="theme-dot td-bold"></span>Bold</button>
         <button class="theme-pill" data-val="warm"><span class="theme-dot td-warm"></span>Hangat</button>
-        <button class="theme-pill" data-val="brand" id="brandThemePill" style="display:none"><span class="theme-dot td-brand" id="brandThemeDot"></span>Brand</button>
+        <button class="theme-pill" data-val="brand" id="brandThemePill" style="opacity:.4" title="Upload logo dulu untuk aktifkan Brand theme"><span class="theme-dot td-brand" id="brandThemeDot"></span>Brand</button>
       </div>
     </div>
 
@@ -619,7 +619,12 @@ function makePillGroup(id, setter) {
 makePillGroup('platformGrid', v => platform = v);
 makePillGroup('toneGrid',    v => tone = v);
 makePillGroup('fontGrid',    v => { font = v; refreshSlides(); });
-makePillGroup('themeGrid',   v => { theme = v; refreshSlides(); });
+makePillGroup('themeGrid',   v => {
+  if (v === 'brand' && !brandLogo) {
+    showError('Upload logo dulu untuk menggunakan Brand theme.'); return;
+  }
+  hideError(); theme = v; refreshSlides();
+});
 
 // Toggle label sync
 document.getElementById('bgToggle').addEventListener('change', function() {
@@ -704,7 +709,8 @@ function applyBrandThemePill(colors) {
   root.style.setProperty('--brand-c1', colors.dot1);
   root.style.setProperty('--brand-c2', colors.dot2);
   dot.style.background = `linear-gradient(135deg, ${colors.dot1}, ${colors.dot2})`;
-  pill.style.display = '';
+  pill.style.opacity = '1';
+  pill.removeAttribute('title');
   // Auto-activate brand theme
   document.querySelectorAll('#themeGrid [data-val]').forEach(b => b.classList.remove('active'));
   pill.classList.add('active');
@@ -777,7 +783,7 @@ function clearLogo(e) {
   document.getElementById('logoInput').value = '';
   // Sembunyikan brand pill, kembali ke dark
   const pill = document.getElementById('brandThemePill');
-  pill.style.display = 'none'; pill.classList.remove('active');
+  pill.style.opacity = '.4'; pill.setAttribute('title','Upload logo dulu untuk aktifkan Brand theme'); pill.classList.remove('active');
   if (theme === 'brand') {
     theme = 'dark';
     document.querySelector('#themeGrid [data-val="dark"]').classList.add('active');

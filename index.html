@@ -833,14 +833,17 @@ function buildSlideUI() {
   updateArrows();
 }
 
-async function refreshSlides() {
+function refreshSlides() {
   if (!slidesData.length) return;
-  // Re-fetch bg jika toggle baru diaktifkan
-  if (document.getElementById('bgToggle').checked && !bgImageUrl) {
-    bgImageUrl = await fetchBgImage(bgTopic || document.getElementById('topic').value.trim());
-  }
+  // Build langsung pakai bgImageUrl yang sudah ada (tidak nunggu fetch)
   buildSlideUI();
   goToSlide(Math.min(currentSlide, slidesData.length - 1));
+  // Fetch bg di background jika belum ada dan toggle aktif
+  if (document.getElementById('bgToggle').checked && !bgImageUrl) {
+    fetchBgImage(bgTopic || document.getElementById('topic').value.trim()).then(url => {
+      if (url) { bgImageUrl = url; buildSlideUI(); goToSlide(currentSlide); }
+    });
+  }
 }
 
 // ── BUILD SINGLE SLIDE HTML ───────────────────────

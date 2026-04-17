@@ -176,9 +176,7 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .s-num{position:absolute;top:58px;right:76px;font-size:26px;font-weight:700;letter-spacing:2px;color:var(--s-muted)}
 .s-wm{position:absolute;font-family:'Instrument Serif',serif;font-size:480px;line-height:1;color:var(--s-wm);right:-30px;bottom:60px;user-select:none;pointer-events:none}
 .s-bottom{position:absolute;bottom:0;left:0;right:0;height:116px;padding:0 76px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--s-border)}
-.s-bottom-logo img{height:60px;max-width:160px;object-fit:contain;opacity:.8;mix-blend-mode:screen}
-.slide[data-theme="light"] .s-bottom-logo img{mix-blend-mode:multiply;opacity:.65}
-.slide[data-theme="warm"] .s-bottom-logo img{mix-blend-mode:screen;opacity:.75}
+.s-bottom-logo img{height:60px;max-width:160px;object-fit:contain}
 
 /* ACCOUNT NAME di bottom bar */
 .s-bottom-account{font-size:20px;font-weight:600;color:var(--s-muted);letter-spacing:.5px}
@@ -715,12 +713,45 @@ function applyBrandThemePill(colors) {
 }
 
 // ── LOGO UPLOAD ───────────────────────────────────
+// Deteksi apakah logo punya background solid (kotak) atau transparan
+async function detectLogoBg(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const w = img.naturalWidth, h = img.naturalHeight;
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const ctx = cv.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const px = (x, y) => {
+          const d = ctx.getImageData(Math.min(x, w-1), Math.min(y, h-1), 4, 4).data;
+          let a=0, bright=0, n=0;
+          for (let i=0;i<d.length;i+=4){ a+=d[i+3]; bright+=(d[i]+d[i+1]+d[i+2])/3; n++; }
+          return { a: a/n, bright: bright/n };
+        };
+        const corners = [px(0,0), px(w-4,0), px(0,h-4), px(w-4,h-4)];
+        const avgA = corners.reduce((s,c)=>s+c.a,0)/4;
+        const avgB = corners.reduce((s,c)=>s+c.bright,0)/4;
+        if (avgA < 40) resolve('transparent');
+        else if (avgB > 200) resolve('light');
+        else if (avgB < 60) resolve('dark');
+        else resolve('colored');
+      } catch { resolve('transparent'); }
+    };
+    img.onerror = () => resolve('transparent');
+    img.src = src;
+  });
+}
+
 function handleLogoUpload(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
     brandLogo = ev.target.result;
     localStorage.setItem('karang_logo', brandLogo);
+    const bgType = await detectLogoBg(brandLogo);
+    localStorage.setItem('karang_logo_bg', bgType);
     applyLogo(brandLogo, file.name);
     brandColors = await extractBrandColors(brandLogo);
     if (brandColors) localStorage.setItem('karang_brand_colors', JSON.stringify(brandColors));
@@ -873,8 +904,31 @@ function buildSlide(s, i, fmtClass, t) {
 
   const total = slidesData.length;
   const num = String(i + 1).padStart(2, '0');
+
+  // Smart logo blend: deteksi bg logo → pilih blend mode yang tepat
+  // Saturation filter: sesuaikan tone logo ke tema aktif
+  let logoStyle = '';
+  if (brandLogo) {
+    const bgType = localStorage.getItem('karang_logo_bg') || 'transparent';
+    let blend, op;
+    if (bgType === 'light')       { blend = 'multiply'; op = .85; }
+    else if (bgType === 'dark')   { blend = 'screen';   op = .90; }
+    else if (bgType === 'colored'){ blend = 'multiply'; op = .80; }
+    else /* transparent */        { blend = t === 'light' ? 'multiply' : 'screen'; op = .85; }
+
+    // Filter saturation & tone per tema — biar logo nyambung sama palet slide
+    const toneFilter = {
+      dark:  'saturate(.72) brightness(1.05)',
+      light: 'saturate(.68) brightness(.92)',
+      bold:  'saturate(.75) contrast(1.08)',
+      warm:  'saturate(.78) sepia(.12)',
+      brand: 'saturate(1)',
+    }[t] || 'saturate(.75)';
+
+    logoStyle = `style="mix-blend-mode:${blend};opacity:${op};filter:${toneFilter}"`;
+  }
   const brand = brandLogo
-    ? `<img src="${brandLogo}" alt="brand">`
+    ? `<img src="${brandLogo}" alt="brand" ${logoStyle}>`
     : `<span class="s-bottom-name">Karang</span>`;
   const acct = accountName ? `<div class="s-bottom-account">${esc(accountName)}</div>` : '';
   const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}${acct}</div><div class="s-counter">${i+1} / ${total}</div></div>`;

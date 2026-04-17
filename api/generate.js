@@ -34,7 +34,7 @@ Hasilkan JSON:
     {"num":5,"type":"body","headline":"Perkembangan 2 — titik kritis / fakta mengejutkan","body":"2-3 kalimat fakta paling penting"},
     {"num":6,"type":"body","headline":"Respons / Reaksi pihak terkait","body":"2-3 kalimat siapa bilang apa"},
     {"num":7,"type":"body","headline":"Dampak / Apa artinya untuk kita","body":"2-3 kalimat relevansi ke pembaca"},
-    {"num":8,"type":"cta","headline":"Pendapat kamu tentang ini?","body":"Ajak diskusi: komen pendapat, share ke teman, ikuti perkembangannya"}
+    {"num":8,"type":"cta","tag":"Label CTA pendek sesuai konteks berita (max 4 kata, contoh: 'Ikut diskusi yuk!', 'Ini pendapatmu?')","headline":"Pendapat kamu tentang ini?","body":"Ajak diskusi: komen pendapat, share ke teman, ikuti perkembangannya"}
   ],
   "caption": "Caption berita yang engaging, 2-3 paragraf, emoji secukupnya, opening kuat",
   "hashtags": "8-12 hashtag relevan campuran trending dan niche"
@@ -62,7 +62,7 @@ Hasilkan JSON (jumlah slide 7-9 sesuai kedalaman konten):
     {"num":5,"type":"body","headline":"Poin utama 4 (max 7 kata)","body":"2-3 kalimat konkret"},
     {"num":6,"type":"body","headline":"Poin utama 5 — insight mendalam (max 7 kata)","body":"2-3 kalimat yang paling valuable"},
     {"num":7,"type":"body","headline":"Kesalahan umum / Mitos yang perlu diluruskan","body":"2-3 kalimat yang surprising dan relatable"},
-    {"num":8,"type":"cta","headline":"Ajakan aksi spesifik (max 8 kata)","body":"Instruksi konkret: save, komen, follow, DM"}
+    {"num":8,"type":"cta","tag":"Label CTA pendek sesuai topik (max 4 kata, contoh: 'Yuk mulai sekarang!', 'Waktunya action!')","headline":"Ajakan aksi spesifik (max 8 kata)","body":"Instruksi konkret: save, komen, follow, DM"}
   ],
   "caption": "Caption siap posting, opening kuat, 2-3 paragraf pendek, emoji secukupnya",
   "hashtags": "8-12 hashtag campuran besar dan niche"

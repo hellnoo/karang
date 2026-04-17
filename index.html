@@ -949,7 +949,7 @@ function buildSlide(s, i, fmtClass, t) {
   } else if (s.type === 'cta') {
     el.innerHTML = `${base}
       <div class="s-cta">
-        <div class="s-cta-tag">Saatnya bertindak</div>
+        <div class="s-cta-tag">${esc(s.tag || 'Saatnya bertindak')}</div>
         <div class="s-cta-hl">${esc(s.headline)}</div>
         ${s.body ? `<div class="s-cta-body">${esc(s.body)}</div>` : ''}
         <div class="s-cta-pill">Simpan & Share 🔖</div>

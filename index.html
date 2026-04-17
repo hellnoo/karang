@@ -57,6 +57,7 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .theme-pill.active{border-color:var(--p5);background:var(--surface2);color:var(--ink)}
 .theme-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
 .td-dark{background:linear-gradient(135deg,#160d3a,#7c6af7)}
+.td-brand{background:linear-gradient(135deg,var(--brand-c1,#160d3a),var(--brand-c2,#7c6af7))}
 .td-light{background:linear-gradient(135deg,#ede8ff,#6d5ce7)}
 .td-bold{background:linear-gradient(135deg,#000,#a78bfa)}
 .td-warm{background:linear-gradient(135deg,#1a0a00,#f59e0b)}
@@ -379,6 +380,7 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
         <button class="theme-pill" data-val="light"><span class="theme-dot td-light"></span>Terang</button>
         <button class="theme-pill" data-val="bold"><span class="theme-dot td-bold"></span>Bold</button>
         <button class="theme-pill" data-val="warm"><span class="theme-dot td-warm"></span>Hangat</button>
+        <button class="theme-pill" data-val="brand" id="brandThemePill" style="display:none"><span class="theme-dot td-brand" id="brandThemeDot"></span>Brand</button>
       </div>
     </div>
 
@@ -625,14 +627,105 @@ document.getElementById('bgToggle').addEventListener('change', function() {
   document.getElementById('bgToggleLabel').textContent = this.checked ? 'Aktif' : 'Nonaktif';
 });
 
+// ── COLOR EXTRACTION ──────────────────────────────
+let brandColors = JSON.parse(localStorage.getItem('karang_brand_colors') || 'null');
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h, s, l = (max+min)/2;
+  if (max === min) { h = s = 0; }
+  else {
+    const d = max - min;
+    s = l > 0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max) {
+      case r: h = ((g-b)/d + (g<b?6:0))/6; break;
+      case g: h = ((b-r)/d + 2)/6; break;
+      case b: h = ((r-g)/d + 4)/6; break;
+    }
+  }
+  return [h*360, s, l];
+}
+
+function hslToCss(h, s, l) {
+  return `hsl(${Math.round(h)},${Math.round(s*100)}%,${Math.round(l*100)}%)`;
+}
+
+function extractBrandColors(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const sz = 60;
+      canvas.width = sz; canvas.height = sz;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, sz, sz);
+      const data = ctx.getImageData(0, 0, sz, sz).data;
+
+      let best = null, bestScore = -1;
+      for (let i = 0; i < data.length; i += 4) {
+        const a = data[i+3];
+        if (a < 100) continue;
+        const r = data[i], g = data[i+1], b = data[i+2];
+        const [h, s, l] = rgbToHsl(r, g, b);
+        // Score: vibrant, not too dark, not too light
+        const score = s * (1 - Math.abs(l - 0.5) * 1.5);
+        if (score > bestScore && l > 0.15 && l < 0.88) {
+          bestScore = score; best = { h, s, l };
+        }
+      }
+
+      if (!best) return resolve(null);
+
+      const { h, s } = best;
+      const colors = {
+        accent:  hslToCss(h, Math.min(s, 0.85), 0.62),
+        accent2: hslToCss(h+25, Math.min(s, 0.8), 0.72),
+        bg1:     hslToCss(h, 0.75, 0.06),
+        bg2:     hslToCss(h, 0.65, 0.13),
+        line1:   hslToCss(h, Math.min(s,0.9), 0.58),
+        line2:   hslToCss(h+30, Math.min(s,0.85), 0.68),
+        text2:   `hsla(${Math.round(h)},30%,88%,0.8)`,
+        muted:   `hsla(${Math.round(h)},40%,72%,0.5)`,
+        wm:      `hsla(${Math.round(h)},${Math.round(s*100)}%,55%,0.055)`,
+        border:  `hsla(${Math.round(h)},${Math.round(s*100)}%,60%,0.2)`,
+        dot1:    hslToCss(h, Math.min(s,0.8), 0.2),
+        dot2:    hslToCss(h, Math.min(s,0.85), 0.65),
+      };
+      resolve(colors);
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function applyBrandThemePill(colors) {
+  if (!colors) return;
+  const pill = document.getElementById('brandThemePill');
+  const dot = document.getElementById('brandThemeDot');
+  const root = document.documentElement;
+  root.style.setProperty('--brand-c1', colors.dot1);
+  root.style.setProperty('--brand-c2', colors.dot2);
+  dot.style.background = `linear-gradient(135deg, ${colors.dot1}, ${colors.dot2})`;
+  pill.style.display = '';
+  // Auto-activate brand theme
+  document.querySelectorAll('#themeGrid [data-val]').forEach(b => b.classList.remove('active'));
+  pill.classList.add('active');
+  theme = 'brand';
+  refreshSlides();
+}
+
 // ── LOGO UPLOAD ───────────────────────────────────
 function handleLogoUpload(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = ev => {
+  reader.onload = async ev => {
     brandLogo = ev.target.result;
     localStorage.setItem('karang_logo', brandLogo);
     applyLogo(brandLogo, file.name);
+    brandColors = await extractBrandColors(brandLogo);
+    if (brandColors) localStorage.setItem('karang_brand_colors', JSON.stringify(brandColors));
+    applyBrandThemePill(brandColors);
   };
   reader.readAsDataURL(file);
 }
@@ -640,14 +733,25 @@ function applyLogo(src, name) {
   document.getElementById('logoPreview').innerHTML = `<img src="${src}" alt="logo">`;
   document.getElementById('logoName').textContent = name || 'Logo tersimpan';
   document.getElementById('logoClear').classList.add('show');
+  // Restore brand pill if colors saved
+  if (brandColors) applyBrandThemePill(brandColors);
 }
 function clearLogo(e) {
   e.stopPropagation();
-  brandLogo = null; localStorage.removeItem('karang_logo');
+  brandLogo = null; brandColors = null;
+  localStorage.removeItem('karang_logo');
+  localStorage.removeItem('karang_brand_colors');
   document.getElementById('logoPreview').innerHTML = '<span style="font-size:20px;opacity:.5">🖼️</span>';
   document.getElementById('logoName').textContent = 'Upload Logo Brand';
   document.getElementById('logoClear').classList.remove('show');
   document.getElementById('logoInput').value = '';
+  // Sembunyikan brand pill, kembali ke dark
+  const pill = document.getElementById('brandThemePill');
+  pill.style.display = 'none'; pill.classList.remove('active');
+  if (theme === 'brand') {
+    theme = 'dark';
+    document.querySelector('#themeGrid [data-val="dark"]').classList.add('active');
+  }
   refreshSlides();
 }
 
@@ -743,8 +847,21 @@ async function refreshSlides() {
 function buildSlide(s, i, fmtClass, t) {
   const el = document.createElement('div');
   el.className = `slide ${fmtClass}`;
-  el.dataset.theme = t;
+  el.dataset.theme = t === 'brand' ? 'dark' : t; // fallback ke dark structure
   el.dataset.font = font;
+  // Inject brand colors sebagai inline CSS vars
+  if (t === 'brand' && brandColors) {
+    el.style.cssText = `
+      --s-bg: linear-gradient(155deg, ${brandColors.bg1} 0%, ${brandColors.bg2} 55%, ${brandColors.bg1} 100%);
+      --s-line: linear-gradient(90deg, ${brandColors.line1}, ${brandColors.line2});
+      --s-accent: ${brandColors.accent};
+      --s-text: #ffffff;
+      --s-text2: ${brandColors.text2};
+      --s-muted: ${brandColors.muted};
+      --s-wm: ${brandColors.wm};
+      --s-border: ${brandColors.border};
+    `;
+  }
 
   const total = slidesData.length;
   const num = String(i + 1).padStart(2, '0');

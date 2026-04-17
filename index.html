@@ -786,22 +786,28 @@ async function generate() {
 }
 
 // ── RENDER RESULTS ────────────────────────────────
-async function renderResults(data) {
+function renderResults(data) {
   slidesData = data.slides || [];
   currentSlide = 0;
-
-  // Fetch bg image berdasarkan topik
   const topic = document.getElementById('topic').value.trim();
-  if (topic !== bgTopic || !bgImageUrl) {
-    bgTopic = topic;
-    bgImageUrl = await fetchBgImage(topic);
-  }
 
+  // Tampilkan slide langsung tanpa nunggu background
   buildSlideUI();
   document.getElementById('caption').textContent = data.caption || '';
   document.getElementById('hashtags').textContent = data.hashtags || '';
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Fetch background di belakang (tidak blokir UI)
+  if (document.getElementById('bgToggle').checked && (topic !== bgTopic || !bgImageUrl)) {
+    bgTopic = topic;
+    bgImageUrl = null;
+    fetchBgImage(topic).then(url => {
+      if (url) { bgImageUrl = url; buildSlideUI(); goToSlide(currentSlide); }
+    });
+  } else {
+    bgTopic = topic;
+  }
 }
 
 function buildSlideUI() {

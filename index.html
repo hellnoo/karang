@@ -575,6 +575,7 @@ let platform = 'Instagram', tone = 'Santai & relatable';
 let theme = 'dark', format = '1:1', font = 'elegan';
 let brandLogo = localStorage.getItem('karang_logo') || null;
 let accountName = localStorage.getItem('karang_account') || '';
+let brandColors = JSON.parse(localStorage.getItem('karang_brand_colors') || 'null');
 
 // Init account name
 if (accountName) document.addEventListener('DOMContentLoaded', () => {
@@ -628,8 +629,6 @@ document.getElementById('bgToggle').addEventListener('change', function() {
 });
 
 // ── COLOR EXTRACTION ──────────────────────────────
-let brandColors = JSON.parse(localStorage.getItem('karang_brand_colors') || 'null');
-
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r,g,b), min = Math.min(r,g,b);

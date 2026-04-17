@@ -593,7 +593,16 @@ function saveAccountName() {
 let slidesData = [], currentSlide = 0;
 let bgImageUrl = null, bgTopic = '';
 
-if (brandLogo) applyLogo(brandLogo);
+if (brandLogo) {
+  applyLogo(brandLogo);
+  // Deteksi bg logo kalau belum pernah disimpan (logo dari sesi sebelumnya)
+  if (!localStorage.getItem('karang_logo_bg')) {
+    detectLogoBg(brandLogo).then(t => {
+      localStorage.setItem('karang_logo_bg', t);
+      refreshSlides();
+    });
+  }
+}
 
 // ── BACKGROUND FETCH ──────────────────────────────
 async function fetchBgImage(topic) {

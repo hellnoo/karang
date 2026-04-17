@@ -886,7 +886,6 @@ function buildSlide(s, i, fmtClass, t) {
 
   if (s.type === 'hook') {
     el.innerHTML = `${base}
-      <div class="s-wm">01</div>
       <div class="s-hook">
         <div class="s-eyebrow">${esc(accountName || 'Karang')}</div>
         <div class="s-hook-hl">${esc(s.headline)}</div>
@@ -903,7 +902,6 @@ function buildSlide(s, i, fmtClass, t) {
       </div>${bottom}`;
   } else {
     el.innerHTML = `${base}
-      <div class="s-wm">${num}</div>
       <div class="s-body">
         <div class="s-body-tag">— ${num}</div>
         <div class="s-body-hl">${esc(s.headline)}</div>

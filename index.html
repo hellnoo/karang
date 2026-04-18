@@ -60,7 +60,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .main{max-width:860px;margin:0 auto;padding:32px 24px 80px;isolation:isolate}
 
 /* ── HERO FULLSCREEN ──────────────────────────────── */
-.hero{text-align:center;margin-bottom:0;position:relative;overflow:hidden;background:#0d0630;
+.hero{text-align:center;margin-bottom:0;position:relative;overflow:hidden;background:linear-gradient(160deg,#0d0535 0%,#110840 35%,#0e0638 65%,#080320 100%);
   min-height:calc(100svh - 68px);display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:100%;padding:48px 24px 56px}
 @media(max-width:640px){.hero{min-height:calc(100svh - 56px);padding:40px 20px 48px}}
@@ -1754,38 +1754,12 @@ if ('serviceWorker' in navigator) {
     m.maxA  = .4 + Math.random() * .55;
   }
 
-  // ── nebula offscreen ──────────────────────────────────
-  let nebulaCanvas = null;
-  function buildNebula() {
-    nebulaCanvas = document.createElement('canvas');
-    nebulaCanvas.width = W; nebulaCanvas.height = H;
-    const nc = nebulaCanvas.getContext('2d');
-    function blob(cx,cy,rx,ry,r,g,b,a) {
-      const mx = Math.max(rx,ry);
-      const grd = nc.createRadialGradient(cx,cy,0,cx,cy,mx);
-      grd.addColorStop(0,  `rgba(${r},${g},${b},${a})`);
-      grd.addColorStop(.5, `rgba(${r},${g},${b},${a*.35})`);
-      grd.addColorStop(1,  'rgba(0,0,0,0)');
-      nc.save(); nc.translate(cx,cy);
-      nc.scale(rx/mx, ry/mx);
-      nc.translate(-cx,-cy);
-      nc.fillStyle=grd; nc.fillRect(0,0,W,H); nc.restore();
-    }
-    // Full-coverage base wash first, then accent pockets
-    blob(W*.5,  H*.5,  W*.95, H*.95, 70, 35, 200, .2);   // full wash — no bare spots
-    blob(W*.25, H*.35, W*.55, H*.6,  90, 50, 230, .22);  // left cloud
-    blob(W*.75, H*.55, W*.55, H*.6,  55, 28, 175, .2);   // right cloud
-    blob(W*.5,  H*.2,  W*.5,  H*.45, 110,65, 255, .18);  // top-centre glow
-    blob(W*.15, H*.75, W*.4,  H*.35, 45, 65, 185, .14);  // bottom-left
-    blob(W*.85, H*.2,  W*.38, H*.35, 140,45, 220, .16);  // top-right
-  }
-
   // ── resize ────────────────────────────────────────────
   function resize() {
     const nw = canvas.offsetWidth, nh = canvas.offsetHeight;
     if (nw < 10 || nh < 10) return;
     W = canvas.width = nw; H = canvas.height = nh;
-    genStars(); buildNebula();
+    genStars();
     meteors = Array.from({length: POOL}, () => makeMeteor(true));
   }
 
@@ -1793,16 +1767,15 @@ if ('serviceWorker' in navigator) {
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // Radial base: slightly lighter in centre, dark at edges — no banding
-    const bg = ctx.createRadialGradient(W*.5, H*.42, 0, W*.5, H*.42, Math.max(W,H)*.85);
-    bg.addColorStop(0,   '#130a38');
-    bg.addColorStop(.45, '#0d0630');
-    bg.addColorStop(.8,  '#09041e');
-    bg.addColorStop(1,   '#060318');
-    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-    // Nebula
-    if (nebulaCanvas) ctx.drawImage(nebulaCanvas, 0, 0);
+    // Background handled by CSS gradient — canvas only draws stars/meteors
+    // Just a very faint central atmosphere glow, no visible blob edges
+    ctx.globalAlpha = .14;
+    const atm = ctx.createRadialGradient(W*.5, H*.5, 0, W*.5, H*.5, Math.max(W,H)*.7);
+    atm.addColorStop(0,   'rgba(130,90,255,1)');
+    atm.addColorStop(.45, 'rgba(90,50,210,.5)');
+    atm.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = atm; ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
 
     // Stars
     for (const s of stars) {
@@ -1876,7 +1849,7 @@ if ('serviceWorker' in navigator) {
     W = canvas.offsetWidth; H = canvas.offsetHeight;
     if (W < 10 || H < 10) { requestAnimationFrame(tryStart); return; }
     canvas.width = W; canvas.height = H;
-    genStars(); buildNebula();
+    genStars();
     meteors = Array.from({length: POOL}, () => makeMeteor(true));
     requestAnimationFrame(draw);
   }

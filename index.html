@@ -373,6 +373,58 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .trend-clear:hover{color:var(--r5)}
 
 footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:60px}
+
+/* ── PEXELS PHOTO CREDIT ─────────────────────────── */
+.s-photo-credit{position:absolute;bottom:120px;right:76px;font-size:9px;color:rgba(255,255,255,.4);pointer-events:none;z-index:2}
+
+/* ── PEXELS LOADING INDICATOR ────────────────────── */
+.slide-viewport.loading-photo::after{content:'Mencari foto...';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(255,255,255,.5);animation:pulse 1.5s ease-in-out infinite;z-index:10;pointer-events:none;white-space:nowrap}
+
+/* ── REFRESH PHOTO BUTTON ────────────────────────── */
+.bg-toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.bg-refresh-btn{font-size:11px;font-weight:600;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap;margin-left:8px}
+.bg-refresh-btn:hover{color:var(--p3);border-color:var(--p5)}
+
+/* ── SHARE TO WHATSAPP BUTTON ────────────────────── */
+.share-wa-btn{font-size:12px;font-weight:600;color:#25d366;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.25);padding:7px 16px;border-radius:10px;cursor:pointer;transition:all .15s}
+.share-wa-btn:hover{background:rgba(37,211,102,.2)}
+
+/* ── MOBILE RESPONSIVENESS ───────────────────────── */
+@media(max-width:640px){
+  .badge{display:none}
+  .hdr-trial{display:none}
+  .hdr-wa{font-size:10px;padding:4px 10px}
+  .main{padding:24px 16px 60px}
+  .hero{margin-bottom:28px}
+  .hero h1{font-size:clamp(24px,7vw,36px)}
+  .hero p{font-size:13px}
+  .form-card{padding:18px}
+  .pill-grid{gap:6px}
+  .pill{font-size:11px;padding:6px 11px}
+  .theme-pill{font-size:11px;padding:6px 11px}
+  .slide-nav{max-height:220px}
+  .dl-bar{flex-direction:column}
+  .dl-btn{min-width:unset;width:100%}
+  .trend-card{padding:16px 14px}
+  footer{font-size:11px;padding:16px}
+  .copy-all-row{flex-wrap:wrap;gap:8px}
+}
+@media(max-width:480px){
+  .slide-viewport.fmt-11{width:300px;height:300px}
+  .slide-viewport.fmt-916{width:169px;height:300px}
+  .slide.fmt-11{transform:scale(.2778)}
+  .slide.fmt-916{transform:scale(.1563)}
+  .form-card{padding:16px}
+  .edit-fields{grid-template-columns:1fr}
+  .text-grid{grid-template-columns:1fr}
+  .hero{margin-bottom:20px}
+  .hero p{font-size:12px}
+}
+/* Theme pills: 2 per row on mobile */
+@media(max-width:480px){
+  #themeGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #themeGrid .theme-pill{justify-content:flex-start}
+}
 </style>
 </head>
 <body>
@@ -488,13 +540,16 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
         <div style="font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Background Foto</div>
         <div style="font-size:11px;color:var(--muted)">Foto relevan dari Pexels sesuai topik</div>
       </div>
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--ink2)">
-        <div class="toggle-wrap">
-          <input type="checkbox" id="bgToggle" checked style="display:none">
-          <div class="toggle-track" onclick="document.getElementById('bgToggle').click()"></div>
-        </div>
-        <span id="bgToggleLabel">Aktif</span>
-      </label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="bg-refresh-btn" onclick="refreshPhoto()" title="Ganti foto Pexels">🔄 Ganti Foto</button>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--ink2)">
+          <div class="toggle-wrap">
+            <input type="checkbox" id="bgToggle" checked style="display:none">
+            <div class="toggle-track" onclick="document.getElementById('bgToggle').click()"></div>
+          </div>
+          <span id="bgToggleLabel">Aktif</span>
+        </label>
+      </div>
     </div>
 
     <div style="margin-bottom:16px">
@@ -589,6 +644,7 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       </div>
     </div>
     <div class="copy-all-row">
+      <button class="share-wa-btn" onclick="shareToWA()">Bagikan ke WA</button>
       <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll()">Salin Caption + Hashtag</button>
     </div>
   </div>
@@ -848,6 +904,8 @@ function generateMeshBg() {
 }
 
 async function fetchPexelsBg(topic) {
+  const vp = document.getElementById('slideViewport');
+  if (vp) vp.classList.add('loading-photo');
   try {
     const orientation = format === '9:16' ? 'portrait' : 'square';
     const r = await fetch(`/api/pexels?q=${encodeURIComponent(topic)}&orientation=${orientation}`);
@@ -860,6 +918,9 @@ async function fetchPexelsBg(topic) {
       goToSlide(currentSlide);
     }
   } catch { /* gagal diam-diam, pakai mesh */ }
+  finally {
+    if (vp) vp.classList.remove('loading-photo');
+  }
 }
 
 // ── PILL SELECTORS ────────────────────────────────
@@ -1298,7 +1359,9 @@ function buildSlide(s, i, fmtClass, t) {
       bgHtml = `<img class="s-bg-img" src="${bgImageUrl}" alt="">`;
     }
   }
-  const base = `<div class="s-bg"></div>${bgHtml}${overlayLogo}<div class="s-topline"></div><div class="s-num">${num}</div>`;
+  const creditHtml = (bgEnabled && bgPhotoUrl && bgPhotoCredit)
+    ? `<div class="s-photo-credit">📷 ${esc(bgPhotoCredit)}</div>` : '';
+  const base = `<div class="s-bg"></div>${bgHtml}${overlayLogo}<div class="s-topline"></div><div class="s-num">${num}</div>${creditHtml}`;
 
   if (s.type === 'hook') {
     el.innerHTML = `${base}
@@ -1449,6 +1512,22 @@ function setLoading(on) {
 function showError(msg) { const el = document.getElementById('errorBox'); el.textContent = msg; el.classList.add('show'); }
 function hideError() { document.getElementById('errorBox').classList.remove('show'); }
 function esc(s = '') { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── REFRESH PHOTO ─────────────────────────────────
+function refreshPhoto() {
+  bgPhotoUrl = null;
+  const topic = document.getElementById('topic').value.trim();
+  if (topic) fetchPexelsBg(topic);
+}
+
+// ── SHARE TO WHATSAPP ─────────────────────────────
+function shareToWA() {
+  const cap  = document.getElementById('caption').textContent.trim();
+  const tags = document.getElementById('hashtags').textContent.trim();
+  const text = cap + (tags ? '\n\n' + tags : '');
+  const url  = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+}
 
 // Topic textarea dan trend search sengaja dipisahkan — tidak ada auto-sync
 // supaya tidak ada layout shift / scroll saat mengetik topik

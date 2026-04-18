@@ -57,7 +57,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .pw-code-hint{font-size:11px;color:var(--muted);text-align:center}
 
 /* ── MAIN ────────────────────────────────────────── */
-.main{max-width:860px;margin:0 auto;padding:40px 24px 80px}
+.main{max-width:860px;margin:0 auto;padding:40px 24px 80px;isolation:isolate}
 
 /* ── HERO FULLSCREEN ──────────────────────────────── */
 .hero{text-align:center;margin-bottom:36px;position:relative;overflow:hidden;background:#03010c;
@@ -85,8 +85,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .hero-cta-icon{font-size:18px}
 .hero-sub{margin-top:14px;font-size:12px;color:rgba(157,143,255,.45);animation:fadeUp .6s .54s ease both;letter-spacing:.3px}
 
+/* Hero bottom fade → blend into page */
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#0a0a0f);z-index:1;pointer-events:none}
+
 /* Scroll hint */
-.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:fadeUp .6s .8s ease both;cursor:pointer;opacity:.45;transition:opacity .2s}
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:fadeUp .6s .8s ease both;cursor:pointer;opacity:.45;transition:opacity .2s;z-index:2}
 .hero-scroll:hover{opacity:.8}
 .hero-scroll span{font-size:10px;letter-spacing:1.5px;color:rgba(157,143,255,.8);text-transform:uppercase}
 .hero-scroll-arrow{width:20px;height:20px;border-right:1.5px solid rgba(157,143,255,.7);border-bottom:1.5px solid rgba(157,143,255,.7);transform:rotate(45deg);animation:scrollBounce 1.8s ease-in-out infinite}
@@ -95,7 +98,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── FORM ────────────────────────────────────────── */
-.form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;animation:fadeUp .55s ease both}
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:24px;animation:fadeUp .55s ease both;position:relative}
+.form-card::before{content:'';position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(124,106,247,.4),transparent);border-radius:1px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
 @media(max-width:560px){.form-row{grid-template-columns:1fr}}
 label{display:block;font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
@@ -385,7 +389,8 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 #exportArea{position:fixed;left:-99999px;top:0;pointer-events:none;opacity:0}
 
 /* ── TRENDING ────────────────────────────────────── */
-.trend-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:24px;animation:fadeUp .55s .12s ease both}
+.trend-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:24px;animation:fadeUp .55s .12s ease both;position:relative}
+.trend-card::before{content:'';position:absolute;top:0;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(124,106,247,.3),transparent);border-radius:1px}
 .trend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .trend-title{font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .trend-dot{width:7px;height:7px;border-radius:50%;background:var(--r5);animation:pulse 1.8s ease-in-out infinite}
@@ -488,10 +493,22 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 
 <header class="header">
   <svg class="logo-mark" viewBox="0 0 36 36" fill="none">
-    <rect width="36" height="36" rx="10" fill="#13102e"/>
-    <path d="M6 22 Q9.5 15 13.5 19 Q17.5 23 21.5 17 Q24 13.5 30 12" stroke="#9d8fff" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M6 27 Q10 22 14.5 25 Q19 28 23.5 23 Q26 20.5 30 19" stroke="#7c6af7" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
-    <circle cx="30" cy="12" r="2" fill="#bdb4ff"/>
+    <defs>
+      <linearGradient id="hbg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop stop-color="#120d2a"/><stop offset="1" stop-color="#06040f"/></linearGradient>
+      <linearGradient id="hwv" x1="5" y1="24" x2="30" y2="11" gradientUnits="userSpaceOnUse"><stop stop-color="#3d2d9e" stop-opacity=".55"/><stop offset=".45" stop-color="#9d8fff"/><stop offset="1" stop-color="#f0eeff"/></linearGradient>
+    </defs>
+    <rect width="36" height="36" rx="10" fill="url(#hbg)"/>
+    <circle cx="8" cy="8" r=".7" fill="#bdb4ff" opacity=".55"/>
+    <circle cx="27" cy="6" r=".5" fill="#bdb4ff" opacity=".4"/>
+    <circle cx="5" cy="28" r=".55" fill="#bdb4ff" opacity=".35"/>
+    <path d="M5 24 Q9 15 13.5 20 Q18 25 22 18 Q25.5 13 30 11" stroke="url(#hwv)" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="13.5" cy="20" r="2" fill="#7c6af7" opacity=".85"/>
+    <circle cx="22" cy="18" r="2.2" fill="#9d8fff" opacity=".9"/>
+    <circle cx="30" cy="11" r="5.5" fill="#bdb4ff" opacity=".08"/>
+    <circle cx="30" cy="11" r="3" fill="#d4cfff" opacity=".28"/>
+    <circle cx="30" cy="11" r="1.8" fill="#fff"/>
+    <line x1="30" y1="7.8" x2="30" y2="14.2" stroke="#fff" stroke-width=".7" stroke-linecap="round" opacity=".5"/>
+    <line x1="26.8" y1="11" x2="33.2" y2="11" stroke="#fff" stroke-width=".7" stroke-linecap="round" opacity=".5"/>
   </svg>
   <div class="logo">Ka<span>rang</span></div>
   <div class="badge">AI STUDIO</div>
@@ -507,10 +524,23 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
     <div class="hero-inner">
       <div class="hero-logo">
         <svg viewBox="0 0 56 56" fill="none">
-          <rect width="56" height="56" rx="16" fill="#13102e"/>
-          <path d="M9 34 Q14.5 23 21 29 Q27.5 35 34 25 Q37.5 20 47 18" stroke="#9d8fff" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M9 42 Q15.5 33 22.5 38 Q29.5 43 36.5 35 Q40 30.5 47 28" stroke="#7c6af7" stroke-width="2" stroke-linecap="round" opacity=".7"/>
-          <circle cx="47" cy="18" r="3" fill="#bdb4ff"/>
+          <defs>
+            <linearGradient id="hero-bg" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse"><stop stop-color="#130e2b"/><stop offset="1" stop-color="#060410"/></linearGradient>
+            <linearGradient id="hero-wv" x1="8" y1="37" x2="47" y2="17" gradientUnits="userSpaceOnUse"><stop stop-color="#3d2d9e" stop-opacity=".55"/><stop offset=".45" stop-color="#9d8fff"/><stop offset="1" stop-color="#f0eeff"/></linearGradient>
+          </defs>
+          <rect width="56" height="56" rx="16" fill="url(#hero-bg)"/>
+          <circle cx="12" cy="12" r="1" fill="#bdb4ff" opacity=".55"/>
+          <circle cx="42" cy="9" r=".8" fill="#bdb4ff" opacity=".4"/>
+          <circle cx="8" cy="44" r=".85" fill="#bdb4ff" opacity=".35"/>
+          <circle cx="48" cy="43" r=".7" fill="#bdb4ff" opacity=".3"/>
+          <path d="M8 37 Q14 23 21 31 Q28 39 34 28 Q39.5 20 47 17" stroke="url(#hero-wv)" stroke-width="3.2" stroke-linecap="round"/>
+          <circle cx="21" cy="31" r="3" fill="#7c6af7" opacity=".85"/>
+          <circle cx="34" cy="28" r="3.3" fill="#9d8fff" opacity=".9"/>
+          <circle cx="47" cy="17" r="8.5" fill="#bdb4ff" opacity=".08"/>
+          <circle cx="47" cy="17" r="4.5" fill="#d4cfff" opacity=".28"/>
+          <circle cx="47" cy="17" r="2.8" fill="#fff"/>
+          <line x1="47" y1="12" x2="47" y2="22" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+          <line x1="42" y1="17" x2="52" y2="17" stroke="#fff" stroke-width="1" stroke-linecap="round" opacity=".5"/>
         </svg>
       </div>
       <h1>Topik masuk,<br><em>slide konten keluar.</em></h1>

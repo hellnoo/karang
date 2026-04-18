@@ -60,35 +60,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .main{max-width:860px;margin:0 auto;padding:40px 24px 80px}
 
 /* ── HERO ────────────────────────────────────────── */
-.hero{text-align:center;margin-bottom:48px;position:relative}
-
-/* Aurora blobs */
-.aurora{position:absolute;inset:-60px;overflow:hidden;pointer-events:none;z-index:0;filter:blur(72px);opacity:.55}
-.aurora-blob{position:absolute;border-radius:50%;mix-blend-mode:screen}
-.aurora-blob:nth-child(1){width:380px;height:280px;background:radial-gradient(ellipse,rgba(124,106,247,.7) 0%,transparent 70%);top:0;left:10%;animation:auroraA 9s ease-in-out infinite}
-.aurora-blob:nth-child(2){width:300px;height:320px;background:radial-gradient(ellipse,rgba(99,102,241,.55) 0%,transparent 70%);top:20%;right:5%;animation:auroraB 11s ease-in-out infinite}
-.aurora-blob:nth-child(3){width:340px;height:240px;background:radial-gradient(ellipse,rgba(167,139,250,.45) 0%,transparent 70%);bottom:0;left:25%;animation:auroraC 13s ease-in-out infinite}
-@keyframes auroraA{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-20px,20px) scale(.94)}}
-@keyframes auroraB{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(-35px,25px) scale(1.1)}70%{transform:translate(20px,-15px) scale(.92)}}
-@keyframes auroraC{0%,100%{transform:translate(0,0) scale(1)}30%{transform:translate(25px,15px) scale(1.06)}65%{transform:translate(-30px,-20px) scale(.97)}}
-
-/* Floating particles */
-.particles{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.particle{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--p4);opacity:0;animation:particleDrift linear infinite}
-@keyframes particleDrift{0%{opacity:0;transform:translateY(0) scale(0)}10%{opacity:.6}80%{opacity:.15}100%{opacity:0;transform:translateY(-120px) scale(1.5)}}
-.particle:nth-child(1){left:12%;bottom:0;animation-duration:6s;animation-delay:0s}
-.particle:nth-child(2){left:28%;bottom:0;animation-duration:8s;animation-delay:1.5s;background:var(--p3);width:2px;height:2px}
-.particle:nth-child(3){left:45%;bottom:0;animation-duration:7s;animation-delay:.8s}
-.particle:nth-child(4){left:60%;bottom:0;animation-duration:9s;animation-delay:2.2s;background:var(--p3);width:2px;height:2px}
-.particle:nth-child(5){left:75%;bottom:0;animation-duration:6.5s;animation-delay:.4s}
-.particle:nth-child(6){left:88%;bottom:0;animation-duration:7.5s;animation-delay:3s;background:var(--p3)}
-
+.hero{text-align:center;margin-bottom:48px;position:relative;overflow:hidden;border-radius:20px;background:#04020f;padding:48px 24px 52px}
+#spaceCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
 .hero-inner{position:relative;z-index:1}
 .hero-logo{display:flex;justify-content:center;margin-bottom:20px}
-.hero-logo svg{width:56px;height:56px;filter:drop-shadow(0 8px 24px rgba(124,106,247,.5));animation:logoPop .7s cubic-bezier(.34,1.56,.64,1) both}
-@keyframes logoPop{from{opacity:0;transform:scale(.6) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-
-.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(30px,5vw,50px);line-height:1.15;margin-bottom:12px;animation:fadeUp .6s .15s ease both}
+.hero-logo svg{width:64px;height:64px;filter:drop-shadow(0 0 18px rgba(124,106,247,.9)) drop-shadow(0 0 40px rgba(124,106,247,.45));animation:logoPop .7s cubic-bezier(.34,1.56,.64,1) both,floatLogo 7s 1s ease-in-out infinite}
+@keyframes logoPop{from{opacity:0;transform:scale(.5) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes floatLogo{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(30px,5vw,50px);line-height:1.15;margin-bottom:12px;animation:fadeUp .6s .15s ease both;text-shadow:0 0 60px rgba(124,106,247,.3)}
 .hero h1 em{color:var(--p4);font-style:italic}
 .hero p{color:var(--ink2);font-size:15px;max-width:460px;margin:0 auto;animation:fadeUp .6s .28s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -425,8 +404,8 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 
 /* ── REDUCED MOTION ──────────────────────────────── */
 @media(prefers-reduced-motion:reduce){
-  .aurora-blob,.particle{animation:none!important}
-  .aurora{opacity:.3}
+  #spaceCanvas{display:none}
+  .hero{background:linear-gradient(155deg,#06041a,#0e0930)}
   .hero-logo svg,.hero h1,.hero p,.form-card,.trend-card,.results,.slides-header,.slide-viewport,.text-card{animation:none!important;opacity:1!important;transform:none!important}
   .generate-btn::after{display:none}
 }
@@ -503,19 +482,7 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 
 <main class="main">
   <div class="hero">
-    <div class="aurora" aria-hidden="true">
-      <div class="aurora-blob"></div>
-      <div class="aurora-blob"></div>
-      <div class="aurora-blob"></div>
-    </div>
-    <div class="particles" aria-hidden="true">
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-      <div class="particle"></div>
-    </div>
+    <canvas id="spaceCanvas" aria-hidden="true"></canvas>
     <div class="hero-inner">
       <div class="hero-logo">
         <svg viewBox="0 0 56 56" fill="none">
@@ -1615,6 +1582,220 @@ updateTrialBadge();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
+
+// ── SPACE CANVAS ──────────────────────────────────────────
+(function initSpace() {
+  const canvas = document.getElementById('spaceCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0;
+
+  // ── stars ─────────────────────────────────────────────
+  let stars = [];
+  function genStars() {
+    stars = [];
+    const n = Math.min(220, Math.floor(W * H / 900));
+    for (let i = 0; i < n; i++) {
+      const big = Math.random() < .12;
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: big ? 1.2 + Math.random() * .8 : .25 + Math.random() * .65,
+        phase: Math.random() * Math.PI * 2,
+        speed: .006 + Math.random() * .022,
+        base: .25 + Math.random() * .65,
+        type: Math.random() < .15 ? 1 : Math.random() < .07 ? 2 : 0, // 0=white 1=purple 2=blue
+        big
+      });
+    }
+  }
+
+  // ── meteors ───────────────────────────────────────────
+  let meteors = [];
+  let lastSpawn = -9999;
+  const SPAWN_MIN = 2200, SPAWN_VAR = 3000;
+  let nextSpawn = SPAWN_MIN + Math.random() * SPAWN_VAR;
+
+  function spawnMeteor() {
+    const startX = W * .25 + Math.random() * W * .9;
+    const startY = -40 + Math.random() * H * .25;
+    const speed  = 5 + Math.random() * 6.5;
+    const ang    = (200 + Math.random() * 35) * Math.PI / 180;
+    meteors.push({
+      x: startX, y: startY,
+      vx: Math.cos(ang) * speed,
+      vy: Math.sin(ang) * speed,
+      len: 70 + Math.random() * 150,
+      width: .9 + Math.random() * 1.4,
+      alpha: 0, life: 1
+    });
+  }
+
+  // ── nebula offscreen ──────────────────────────────────
+  let nebulaCanvas = null;
+  function buildNebula() {
+    nebulaCanvas = document.createElement('canvas');
+    nebulaCanvas.width  = W;
+    nebulaCanvas.height = H;
+    const nc = nebulaCanvas.getContext('2d');
+
+    function blob(cx, cy, rx, ry, r, g, b, a) {
+      const grd = nc.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+      grd.addColorStop(0,   `rgba(${r},${g},${b},${a})`);
+      grd.addColorStop(.5,  `rgba(${r},${g},${b},${a*.4})`);
+      grd.addColorStop(1,   'rgba(0,0,0,0)');
+      nc.save();
+      nc.translate(cx, cy);
+      nc.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry));
+      nc.translate(-cx, -cy);
+      nc.fillStyle = grd;
+      nc.fillRect(0, 0, W, H);
+      nc.restore();
+    }
+
+    // purple cluster left
+    blob(W*.18, H*.35, W*.45, H*.55, 88, 60, 220, .28);
+    // deep blue right
+    blob(W*.82, H*.55, W*.4,  H*.45, 40, 30, 160, .22);
+    // violet center glow
+    blob(W*.5,  H*.15, W*.5,  H*.4,  100,70, 255, .15);
+    // warm magenta hint
+    blob(W*.7,  H*.8,  W*.35, H*.3,  180,40, 200, .12);
+  }
+
+  // ── resize ────────────────────────────────────────────
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+    if (W < 10 || H < 10) return;
+    genStars();
+    buildNebula();
+  }
+
+  // ── draw loop ─────────────────────────────────────────
+  function draw(ts) {
+    if (!ts) ts = 0;
+    ctx.clearRect(0, 0, W, H);
+
+    // Base deep space
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0,   '#050210');
+    bg.addColorStop(.55, '#060315');
+    bg.addColorStop(1,   '#03020c');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Nebula layer
+    if (nebulaCanvas) {
+      ctx.globalAlpha = 1;
+      ctx.drawImage(nebulaCanvas, 0, 0);
+    }
+
+    // Stars
+    for (const s of stars) {
+      s.phase += s.speed;
+      const tw    = .55 + .45 * Math.sin(s.phase);
+      const alpha = s.base * tw;
+      const colors = [[255,255,255],[189,176,255],[160,220,255]];
+      const [r,g,b] = colors[s.type];
+
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+      ctx.fill();
+
+      if (s.big) {
+        // soft glow halo
+        const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 5);
+        halo.addColorStop(0,   `rgba(${r},${g},${b},${alpha * .35})`);
+        halo.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 5, 0, Math.PI * 2);
+        ctx.fillStyle = halo;
+        ctx.fill();
+
+        // cross sparkle at peak brightness
+        if (tw > .88) {
+          const len = s.r * 5 * tw;
+          ctx.strokeStyle = `rgba(${r},${g},${b},${(tw-.88)*3 * .55})`;
+          ctx.lineWidth = .5;
+          ctx.beginPath();
+          ctx.moveTo(s.x - len, s.y); ctx.lineTo(s.x + len, s.y);
+          ctx.moveTo(s.x, s.y - len); ctx.lineTo(s.x, s.y + len);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Meteor spawn logic
+    if (ts - lastSpawn > nextSpawn) {
+      spawnMeteor();
+      lastSpawn  = ts;
+      nextSpawn  = SPAWN_MIN + Math.random() * SPAWN_VAR;
+    }
+
+    // Draw & update meteors
+    for (let i = meteors.length - 1; i >= 0; i--) {
+      const m = meteors[i];
+      m.x += m.vx;
+      m.y += m.vy;
+
+      // fade in
+      if (m.alpha < 1) m.alpha = Math.min(1, m.alpha + .07);
+      // fade out near edge
+      if (m.x < -100 || m.y > H + 80 || m.x > W + 100) {
+        m.alpha -= .06;
+        if (m.alpha <= 0) { meteors.splice(i, 1); continue; }
+      }
+
+      const spd  = Math.hypot(m.vx, m.vy);
+      const ndx  = -m.vx / spd;
+      const ndy  = -m.vy / spd;
+      const tx   = m.x + ndx * m.len;
+      const ty   = m.y + ndy * m.len;
+
+      // main trail gradient
+      const trail = ctx.createLinearGradient(m.x, m.y, tx, ty);
+      trail.addColorStop(0,    `rgba(255,255,255,${m.alpha})`);
+      trail.addColorStop(.08,  `rgba(230,220,255,${m.alpha * .88})`);
+      trail.addColorStop(.35,  `rgba(157,143,255,${m.alpha * .45})`);
+      trail.addColorStop(.75,  `rgba(100,80,220,${m.alpha * .12})`);
+      trail.addColorStop(1,    'rgba(80,60,180,0)');
+
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(tx, ty);
+      ctx.strokeStyle = trail;
+      ctx.lineWidth   = m.width;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+
+      // glow around head
+      const headGlow = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.width * 7);
+      headGlow.addColorStop(0,  `rgba(240,235,255,${m.alpha * .7})`);
+      headGlow.addColorStop(.4, `rgba(157,143,255,${m.alpha * .25})`);
+      headGlow.addColorStop(1,  'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.width * 7, 0, Math.PI * 2);
+      ctx.fillStyle = headGlow;
+      ctx.fill();
+
+      // bright core dot
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.width, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${m.alpha})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  new ResizeObserver(resize).observe(canvas.parentElement);
+  // first meteor fires quickly
+  setTimeout(spawnMeteor, 600);
+  requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>

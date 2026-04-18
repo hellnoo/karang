@@ -60,7 +60,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .main{max-width:860px;margin:0 auto;padding:32px 24px 80px;isolation:isolate}
 
 /* ── HERO FULLSCREEN ──────────────────────────────── */
-.hero{text-align:center;margin-bottom:0;position:relative;overflow:hidden;background:#03010c;
+.hero{text-align:center;margin-bottom:0;position:relative;overflow:hidden;background:#07031a;
   min-height:calc(100svh - 68px);display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:100%;padding:48px 24px 56px}
 @media(max-width:640px){.hero{min-height:calc(100svh - 56px);padding:40px 20px 48px}}
@@ -1771,11 +1771,13 @@ if ('serviceWorker' in navigator) {
       nc.translate(-cx,-cy);
       nc.fillStyle=grd; nc.fillRect(0,0,W,H); nc.restore();
     }
-    blob(W*.15, H*.4,  W*.5,  H*.55, 80, 50, 210, .3);
-    blob(W*.85, H*.5,  W*.42, H*.5,  35, 25, 155, .24);
-    blob(W*.5,  H*.12, W*.55, H*.42, 95, 65, 245, .16);
-    blob(W*.7,  H*.82, W*.38, H*.32, 170,35, 195, .13);
-    blob(W*.3,  H*.75, W*.3,  H*.28, 50, 80, 180, .1);
+    // Spread evenly across full width
+    blob(W*.5,  H*.45, W*.7,  H*.7,  90, 60, 230, .32);  // centre large
+    blob(W*.15, H*.4,  W*.45, H*.55, 80, 45, 200, .28);  // left
+    blob(W*.85, H*.5,  W*.45, H*.55, 50, 30, 170, .26);  // right
+    blob(W*.3,  H*.2,  W*.4,  H*.4,  110,70, 255, .2);   // top-left
+    blob(W*.75, H*.75, W*.38, H*.38, 160,35, 210, .18);  // bottom-right
+    blob(W*.1,  H*.75, W*.32, H*.32, 50, 70, 180, .15);  // bottom-left
   }
 
   // ── resize ────────────────────────────────────────────
@@ -1791,11 +1793,11 @@ if ('serviceWorker' in navigator) {
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // Deep space gradient bg
+    // Deep space gradient bg — purple-tinted so bare areas aren't pitch black
     const bg = ctx.createLinearGradient(0, 0, W, H);
-    bg.addColorStop(0,   '#04010e');
-    bg.addColorStop(.4,  '#060214');
-    bg.addColorStop(1,   '#02010a');
+    bg.addColorStop(0,   '#08041a');
+    bg.addColorStop(.5,  '#07031a');
+    bg.addColorStop(1,   '#050215');
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     // Nebula

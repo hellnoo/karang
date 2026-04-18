@@ -59,19 +59,39 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 /* ── MAIN ────────────────────────────────────────── */
 .main{max-width:860px;margin:0 auto;padding:40px 24px 80px}
 
-/* ── HERO ────────────────────────────────────────── */
-.hero{text-align:center;margin-bottom:36px;position:relative;overflow:hidden;background:#04020f;padding:64px 24px 60px;margin-left:-24px;margin-right:-24px}
-@media(max-width:640px){.hero{padding:56px 20px 52px;margin-left:-16px;margin-right:-16px}}
+/* ── HERO FULLSCREEN ──────────────────────────────── */
+.hero{text-align:center;margin-bottom:36px;position:relative;overflow:hidden;background:#03010c;
+  min-height:calc(100svh - 68px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin-left:-24px;margin-right:-24px;margin-top:-40px;padding:48px 24px 56px}
+@media(max-width:640px){.hero{min-height:calc(100svh - 56px);margin-left:-16px;margin-right:-16px;margin-top:-24px;padding:40px 20px 48px}}
 #spaceCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
-.hero-inner{position:relative;z-index:1}
-.hero-logo{display:flex;justify-content:center;margin-bottom:22px}
-.hero-logo svg{width:68px;height:68px;filter:drop-shadow(0 0 20px rgba(124,106,247,.95)) drop-shadow(0 0 48px rgba(124,106,247,.4));animation:logoPop .7s cubic-bezier(.34,1.56,.64,1) both,floatLogo 7s 1s ease-in-out infinite}
-@keyframes logoPop{from{opacity:0;transform:scale(.5) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.hero-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0}
+.hero-logo{display:flex;justify-content:center;margin-bottom:20px}
+.hero-logo svg{width:72px;height:72px;filter:drop-shadow(0 0 22px rgba(124,106,247,1)) drop-shadow(0 0 55px rgba(124,106,247,.45));animation:logoPop .7s cubic-bezier(.34,1.56,.64,1) both,floatLogo 7s 1s ease-in-out infinite}
+@keyframes logoPop{from{opacity:0;transform:scale(.45) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes floatLogo{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-14px) rotate(2deg)}}
-.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(28px,5vw,50px);line-height:1.15;margin-bottom:14px;animation:fadeUp .6s .15s ease both;text-shadow:0 0 60px rgba(124,106,247,.35)}
+
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(28px,5vw,54px);line-height:1.12;margin-bottom:14px;animation:fadeUp .6s .15s ease both;text-shadow:0 0 80px rgba(124,106,247,.5)}
 .hero h1 em{color:var(--p4);font-style:italic}
-.hero p{color:rgba(180,170,255,.75);font-size:15px;max-width:460px;margin:0 auto;animation:fadeUp .6s .28s ease both;line-height:1.65}
-@media(max-width:480px){.hero h1{font-size:clamp(24px,7vw,34px)}.hero p{font-size:13px}}
+.hero p{color:rgba(180,168,255,.72);font-size:15px;max-width:440px;margin:0 auto 36px;animation:fadeUp .6s .28s ease both;line-height:1.7}
+@media(max-width:480px){.hero h1{font-size:clamp(24px,7.5vw,34px)}.hero p{font-size:13px;margin-bottom:28px}}
+
+/* Hero CTA button */
+.hero-cta{display:inline-flex;align-items:center;gap:10px;padding:15px 36px;background:rgba(124,106,247,.15);border:1.5px solid rgba(157,143,255,.5);color:#fff;border-radius:60px;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .25s;animation:fadeUp .6s .42s ease both;backdrop-filter:blur(8px);letter-spacing:.3px;position:relative;overflow:hidden}
+.hero-cta::before{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.1) 50%,transparent 70%);transform:translateX(-100%);transition:transform .5s}
+.hero-cta:hover{background:rgba(124,106,247,.35);border-color:rgba(157,143,255,.9);transform:translateY(-2px);box-shadow:0 0 30px rgba(124,106,247,.4),0 8px 30px rgba(0,0,0,.4)}
+.hero-cta:hover::before{transform:translateX(130%)}
+.hero-cta-icon{font-size:18px}
+.hero-sub{margin-top:14px;font-size:12px;color:rgba(157,143,255,.45);animation:fadeUp .6s .54s ease both;letter-spacing:.3px}
+
+/* Scroll hint */
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:fadeUp .6s .8s ease both;cursor:pointer;opacity:.45;transition:opacity .2s}
+.hero-scroll:hover{opacity:.8}
+.hero-scroll span{font-size:10px;letter-spacing:1.5px;color:rgba(157,143,255,.8);text-transform:uppercase}
+.hero-scroll-arrow{width:20px;height:20px;border-right:1.5px solid rgba(157,143,255,.7);border-bottom:1.5px solid rgba(157,143,255,.7);transform:rotate(45deg);animation:scrollBounce 1.8s ease-in-out infinite}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(5px)}}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── FORM ────────────────────────────────────────── */
@@ -456,7 +476,6 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
   .edit-fields{grid-template-columns:1fr}
   .text-grid{grid-template-columns:1fr}
   .hero{margin-bottom:20px}
-  .hero p{font-size:12px}
 }
 /* Theme pills: 2 per row on mobile */
 @media(max-width:480px){
@@ -496,6 +515,15 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       </div>
       <h1>Topik masuk,<br><em>slide konten keluar.</em></h1>
       <p>Isi topik — dapat slide carousel siap upload lengkap dengan caption dan hashtag.</p>
+      <button class="hero-cta" onclick="document.getElementById('topic').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>document.getElementById('topic').focus(),400)">
+        <span class="hero-cta-icon">✦</span> Buat Konten Sekarang
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <p class="hero-sub" id="heroSubTrial"></p>
+    </div>
+    <div class="hero-scroll" onclick="document.querySelector('.trend-card').scrollIntoView({behavior:'smooth'})">
+      <span>Scroll</span>
+      <div class="hero-scroll-arrow"></div>
     </div>
   </div>
 
@@ -1596,220 +1624,197 @@ if ('serviceWorker' in navigator) {
   let stars = [];
   function genStars() {
     stars = [];
-    const n = Math.min(220, Math.floor(W * H / 900));
+    const n = Math.min(260, Math.floor(W * H / 750));
     for (let i = 0; i < n; i++) {
-      const big = Math.random() < .12;
+      const big = Math.random() < .1;
       stars.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        r: big ? 1.2 + Math.random() * .8 : .25 + Math.random() * .65,
+        x: Math.random() * W, y: Math.random() * H,
+        r: big ? 1.1 + Math.random() * .9 : .2 + Math.random() * .7,
         phase: Math.random() * Math.PI * 2,
-        speed: .006 + Math.random() * .022,
-        base: .25 + Math.random() * .65,
-        type: Math.random() < .15 ? 1 : Math.random() < .07 ? 2 : 0, // 0=white 1=purple 2=blue
+        speed: .005 + Math.random() * .02,
+        base: .2 + Math.random() * .7,
+        type: Math.random() < .14 ? 1 : Math.random() < .07 ? 2 : 0,
         big
       });
     }
   }
 
-  // ── meteors ───────────────────────────────────────────
+  // ── meteor pool (continuous rain) ─────────────────────
+  const POOL = 24;
   let meteors = [];
-  let lastSpawn = -9999;
-  const SPAWN_MIN = 2200, SPAWN_VAR = 3000;
-  let nextSpawn = SPAWN_MIN + Math.random() * SPAWN_VAR;
 
-  function spawnMeteor() {
-    const startX = W * .25 + Math.random() * W * .9;
-    const startY = -40 + Math.random() * H * .25;
-    const speed  = 5 + Math.random() * 6.5;
-    const ang    = (200 + Math.random() * 35) * Math.PI / 180;
-    meteors.push({
-      x: startX, y: startY,
-      vx: Math.cos(ang) * speed,
-      vy: Math.sin(ang) * speed,
-      len: 70 + Math.random() * 150,
-      width: .9 + Math.random() * 1.4,
-      alpha: 0, life: 1
-    });
+  function makeMeteor(scatter) {
+    const ang   = (210 + Math.random() * 28) * Math.PI / 180;
+    const speed = 5.5 + Math.random() * 7;
+    const vx    = Math.cos(ang) * speed;
+    const vy    = Math.sin(ang) * speed;
+    let x = W * 0.05 + Math.random() * W * 1.1;
+    let y = -30 - Math.random() * 60;
+    if (scatter) {
+      const adv = Math.random() * 200;
+      x += vx * adv; y += vy * adv;
+    }
+    return {
+      x, y, vx, vy,
+      len:   50 + Math.random() * 120,
+      width: .35 + Math.random() * .85,
+      alpha: scatter ? Math.random() * .7 : 0,
+      maxA:  .4 + Math.random() * .55
+    };
+  }
+
+  function resetMeteor(m) {
+    const ang   = (210 + Math.random() * 28) * Math.PI / 180;
+    const speed = 5.5 + Math.random() * 7;
+    m.vx    = Math.cos(ang) * speed;
+    m.vy    = Math.sin(ang) * speed;
+    m.x     = W * 0.05 + Math.random() * W * 1.1;
+    m.y     = -30 - Math.random() * 80;
+    m.len   = 50 + Math.random() * 120;
+    m.width = .35 + Math.random() * .85;
+    m.alpha = 0;
+    m.maxA  = .4 + Math.random() * .55;
   }
 
   // ── nebula offscreen ──────────────────────────────────
   let nebulaCanvas = null;
   function buildNebula() {
     nebulaCanvas = document.createElement('canvas');
-    nebulaCanvas.width  = W;
-    nebulaCanvas.height = H;
+    nebulaCanvas.width = W; nebulaCanvas.height = H;
     const nc = nebulaCanvas.getContext('2d');
-
-    function blob(cx, cy, rx, ry, r, g, b, a) {
-      const grd = nc.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
-      grd.addColorStop(0,   `rgba(${r},${g},${b},${a})`);
-      grd.addColorStop(.5,  `rgba(${r},${g},${b},${a*.4})`);
-      grd.addColorStop(1,   'rgba(0,0,0,0)');
-      nc.save();
-      nc.translate(cx, cy);
-      nc.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry));
-      nc.translate(-cx, -cy);
-      nc.fillStyle = grd;
-      nc.fillRect(0, 0, W, H);
-      nc.restore();
+    function blob(cx,cy,rx,ry,r,g,b,a) {
+      const mx = Math.max(rx,ry);
+      const grd = nc.createRadialGradient(cx,cy,0,cx,cy,mx);
+      grd.addColorStop(0,  `rgba(${r},${g},${b},${a})`);
+      grd.addColorStop(.5, `rgba(${r},${g},${b},${a*.35})`);
+      grd.addColorStop(1,  'rgba(0,0,0,0)');
+      nc.save(); nc.translate(cx,cy);
+      nc.scale(rx/mx, ry/mx);
+      nc.translate(-cx,-cy);
+      nc.fillStyle=grd; nc.fillRect(0,0,W,H); nc.restore();
     }
-
-    // purple cluster left
-    blob(W*.18, H*.35, W*.45, H*.55, 88, 60, 220, .28);
-    // deep blue right
-    blob(W*.82, H*.55, W*.4,  H*.45, 40, 30, 160, .22);
-    // violet center glow
-    blob(W*.5,  H*.15, W*.5,  H*.4,  100,70, 255, .15);
-    // warm magenta hint
-    blob(W*.7,  H*.8,  W*.35, H*.3,  180,40, 200, .12);
+    blob(W*.15, H*.4,  W*.5,  H*.55, 80, 50, 210, .3);
+    blob(W*.85, H*.5,  W*.42, H*.5,  35, 25, 155, .24);
+    blob(W*.5,  H*.12, W*.55, H*.42, 95, 65, 245, .16);
+    blob(W*.7,  H*.82, W*.38, H*.32, 170,35, 195, .13);
+    blob(W*.3,  H*.75, W*.3,  H*.28, 50, 80, 180, .1);
   }
 
   // ── resize ────────────────────────────────────────────
   function resize() {
     const nw = canvas.offsetWidth, nh = canvas.offsetHeight;
     if (nw < 10 || nh < 10) return;
-    W = canvas.width  = nw;
-    H = canvas.height = nh;
-    genStars();
-    buildNebula();
+    W = canvas.width = nw; H = canvas.height = nh;
+    genStars(); buildNebula();
+    meteors = Array.from({length: POOL}, () => makeMeteor(true));
   }
 
   // ── draw loop ─────────────────────────────────────────
-  function draw(ts) {
-    if (!ts) ts = 0;
+  function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // Base deep space
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0,   '#050210');
-    bg.addColorStop(.55, '#060315');
-    bg.addColorStop(1,   '#03020c');
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
+    // Deep space gradient bg
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0,   '#04010e');
+    bg.addColorStop(.4,  '#060214');
+    bg.addColorStop(1,   '#02010a');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
-    // Nebula layer
-    if (nebulaCanvas) {
-      ctx.globalAlpha = 1;
-      ctx.drawImage(nebulaCanvas, 0, 0);
-    }
+    // Nebula
+    if (nebulaCanvas) ctx.drawImage(nebulaCanvas, 0, 0);
 
     // Stars
     for (const s of stars) {
       s.phase += s.speed;
-      const tw    = .55 + .45 * Math.sin(s.phase);
+      const tw    = .5 + .5 * Math.sin(s.phase);
       const alpha = s.base * tw;
-      const colors = [[255,255,255],[189,176,255],[160,220,255]];
-      const [r,g,b] = colors[s.type];
-
+      const C     = [[255,255,255],[189,176,255],[155,215,255]][s.type];
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${C[0]},${C[1]},${C[2]},${alpha})`;
       ctx.fill();
-
       if (s.big) {
-        // soft glow halo
-        const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 5);
-        halo.addColorStop(0,   `rgba(${r},${g},${b},${alpha * .35})`);
-        halo.addColorStop(1,   'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 5, 0, Math.PI * 2);
-        ctx.fillStyle = halo;
-        ctx.fill();
-
-        // cross sparkle at peak brightness
-        if (tw > .88) {
-          const len = s.r * 5 * tw;
-          ctx.strokeStyle = `rgba(${r},${g},${b},${(tw-.88)*3 * .55})`;
-          ctx.lineWidth = .5;
+        const halo = ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*5.5);
+        halo.addColorStop(0,`rgba(${C[0]},${C[1]},${C[2]},${alpha*.3})`);
+        halo.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r*5.5,0,Math.PI*2);
+        ctx.fillStyle=halo; ctx.fill();
+        if (tw > .85) {
+          const cl = s.r*6*tw;
+          ctx.strokeStyle=`rgba(${C[0]},${C[1]},${C[2]},${(tw-.85)*4*.5})`;
+          ctx.lineWidth=.5;
           ctx.beginPath();
-          ctx.moveTo(s.x - len, s.y); ctx.lineTo(s.x + len, s.y);
-          ctx.moveTo(s.x, s.y - len); ctx.lineTo(s.x, s.y + len);
+          ctx.moveTo(s.x-cl,s.y); ctx.lineTo(s.x+cl,s.y);
+          ctx.moveTo(s.x,s.y-cl); ctx.lineTo(s.x,s.y+cl);
           ctx.stroke();
         }
       }
     }
 
-    // Meteor spawn logic
-    if (ts - lastSpawn > nextSpawn) {
-      spawnMeteor();
-      lastSpawn  = ts;
-      nextSpawn  = SPAWN_MIN + Math.random() * SPAWN_VAR;
-    }
+    // Meteors
+    for (const m of meteors) {
+      m.x += m.vx; m.y += m.vy;
 
-    // Draw & update meteors
-    for (let i = meteors.length - 1; i >= 0; i--) {
-      const m = meteors[i];
-      m.x += m.vx;
-      m.y += m.vy;
+      // fade in/out
+      if (m.alpha < m.maxA) m.alpha = Math.min(m.maxA, m.alpha + .04);
+      const offscreen = m.x < -150 || m.y > H + 100 || m.x > W + 150;
+      if (offscreen) { resetMeteor(m); continue; }
 
-      // fade in
-      if (m.alpha < 1) m.alpha = Math.min(1, m.alpha + .07);
-      // fade out near edge
-      if (m.x < -100 || m.y > H + 80 || m.x > W + 100) {
-        m.alpha -= .06;
-        if (m.alpha <= 0) { meteors.splice(i, 1); continue; }
-      }
+      const spd = Math.hypot(m.vx, m.vy);
+      const nx = -m.vx/spd, ny = -m.vy/spd;
+      const tx = m.x + nx*m.len, ty = m.y + ny*m.len;
 
-      const spd  = Math.hypot(m.vx, m.vy);
-      const ndx  = -m.vx / spd;
-      const ndy  = -m.vy / spd;
-      const tx   = m.x + ndx * m.len;
-      const ty   = m.y + ndy * m.len;
+      const trail = ctx.createLinearGradient(m.x,m.y,tx,ty);
+      trail.addColorStop(0,   `rgba(255,255,255,${m.alpha})`);
+      trail.addColorStop(.07, `rgba(225,215,255,${m.alpha*.9})`);
+      trail.addColorStop(.3,  `rgba(157,143,255,${m.alpha*.45})`);
+      trail.addColorStop(.7,  `rgba(100,75,220,${m.alpha*.1})`);
+      trail.addColorStop(1,   'rgba(80,55,180,0)');
 
-      // main trail gradient
-      const trail = ctx.createLinearGradient(m.x, m.y, tx, ty);
-      trail.addColorStop(0,    `rgba(255,255,255,${m.alpha})`);
-      trail.addColorStop(.08,  `rgba(230,220,255,${m.alpha * .88})`);
-      trail.addColorStop(.35,  `rgba(157,143,255,${m.alpha * .45})`);
-      trail.addColorStop(.75,  `rgba(100,80,220,${m.alpha * .12})`);
-      trail.addColorStop(1,    'rgba(80,60,180,0)');
+      ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(tx,ty);
+      ctx.strokeStyle=trail; ctx.lineWidth=m.width; ctx.lineCap='round'; ctx.stroke();
 
-      ctx.beginPath();
-      ctx.moveTo(m.x, m.y);
-      ctx.lineTo(tx, ty);
-      ctx.strokeStyle = trail;
-      ctx.lineWidth   = m.width;
-      ctx.lineCap     = 'round';
-      ctx.stroke();
+      // head glow
+      const hw = m.width*6;
+      const hg = ctx.createRadialGradient(m.x,m.y,0,m.x,m.y,hw);
+      hg.addColorStop(0,  `rgba(245,240,255,${m.alpha*.65})`);
+      hg.addColorStop(.4, `rgba(157,143,255,${m.alpha*.2})`);
+      hg.addColorStop(1,  'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(m.x,m.y,hw,0,Math.PI*2);
+      ctx.fillStyle=hg; ctx.fill();
 
-      // glow around head
-      const headGlow = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.width * 7);
-      headGlow.addColorStop(0,  `rgba(240,235,255,${m.alpha * .7})`);
-      headGlow.addColorStop(.4, `rgba(157,143,255,${m.alpha * .25})`);
-      headGlow.addColorStop(1,  'rgba(0,0,0,0)');
-      ctx.beginPath();
-      ctx.arc(m.x, m.y, m.width * 7, 0, Math.PI * 2);
-      ctx.fillStyle = headGlow;
-      ctx.fill();
-
-      // bright core dot
-      ctx.beginPath();
-      ctx.arc(m.x, m.y, m.width, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${m.alpha})`;
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(m.x,m.y,m.width*.9,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${m.alpha})`; ctx.fill();
     }
 
     requestAnimationFrame(draw);
   }
 
-  // Ensure layout is ready before first resize (iOS Safari fix)
+  // iOS Safari: wait until layout ready
   function tryStart() {
-    W = canvas.offsetWidth;
-    H = canvas.offsetHeight;
+    W = canvas.offsetWidth; H = canvas.offsetHeight;
     if (W < 10 || H < 10) { requestAnimationFrame(tryStart); return; }
     canvas.width = W; canvas.height = H;
     genStars(); buildNebula();
-    setTimeout(spawnMeteor, 600);
+    meteors = Array.from({length: POOL}, () => makeMeteor(true));
     requestAnimationFrame(draw);
   }
 
   if (typeof ResizeObserver !== 'undefined') {
     new ResizeObserver(resize).observe(canvas.parentElement);
-  } else {
-    window.addEventListener('resize', resize);
-  }
+  } else { window.addEventListener('resize', resize); }
   requestAnimationFrame(tryStart);
+})();
+
+// Update hero sub text with trial info
+(function() {
+  const el = document.getElementById('heroSubTrial');
+  if (!el) return;
+  if (hasAccess()) { el.textContent = '✓ Akses penuh aktif'; el.style.color='rgba(62,207,142,.6)'; }
+  else {
+    const left = getTrialLeft();
+    el.textContent = left > 0 ? `${left}x percobaan gratis tersisa · Akses penuh hubungi UW` : 'Trial habis · Hubungi UW untuk akses penuh';
+  }
 })();
 </script>
 </body>

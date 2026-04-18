@@ -6,19 +6,36 @@ export default async function handler(req, res) {
   if (!key) return res.status(500).json({ error: 'Pexels key not configured' });
 
   const query = req.query.q || 'abstract background';
-  const orientation = req.query.orientation || 'square'; // square | portrait
+  const orientation = req.query.orientation || 'square';
 
-  try {
+  // Fallback chain: query penuh → kata pertama → generic
+  const words = query.trim().split(/\s+/);
+  const candidates = [
+    query,
+    words.slice(0, 2).join(' '),
+    words[0],
+    'professional abstract background',
+  ].filter((v, i, a) => a.indexOf(v) === i); // dedupe
+
+  async function search(q) {
     const r = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=8&orientation=${orientation}&size=large`,
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=8&orientation=${orientation}&size=large`,
       { headers: { Authorization: key } }
     );
-    if (!r.ok) return res.status(502).json({ error: 'Pexels error' });
+    if (!r.ok) return [];
     const data = await r.json();
-    const photos = data.photos || [];
+    return data.photos || [];
+  }
+
+  try {
+    let photos = [];
+    for (const q of candidates) {
+      photos = await search(q);
+      if (photos.length) break;
+    }
+
     if (!photos.length) return res.status(200).json({ url: null });
 
-    // Acak dari 5 foto teratas supaya tiap generate beda
     const pick = photos[Math.floor(Math.random() * Math.min(5, photos.length))];
     return res.status(200).json({
       url: pick.src.large2x || pick.src.large,

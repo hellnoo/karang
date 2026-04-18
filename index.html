@@ -65,6 +65,7 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 /* LOGO UPLOAD */
 .logo-upload-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px dashed var(--border2);border-radius:12px;cursor:pointer;transition:all .15s;margin-bottom:16px}
 .logo-upload-row:hover{border-color:var(--p5);background:rgba(124,106,247,.05)}
+.logo-upload-row.processing{cursor:default;pointer-events:none;border-color:var(--p5);background:rgba(124,106,247,.06)}
 .logo-preview-box{width:44px;height:44px;border-radius:10px;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
 .logo-preview-box img{width:100%;height:100%;object-fit:contain}
 .logo-upload-info{flex:1}
@@ -74,6 +75,12 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .logo-clear-btn{font-size:11px;color:var(--muted);background:transparent;border:1px solid var(--border);padding:5px 10px;border-radius:8px;cursor:pointer;transition:all .15s;display:none}
 .logo-clear-btn:hover{color:var(--r5);border-color:var(--r5)}
 .logo-clear-btn.show{display:block}
+/* Logo processing spinner */
+.logo-spinner{width:22px;height:22px;border:2.5px solid var(--border2);border-top-color:var(--p5);border-radius:50%;animation:logo-spin .7s linear infinite;flex-shrink:0}
+@keyframes logo-spin{to{transform:rotate(360deg)}}
+.logo-progress{font-size:11px;color:var(--p4);display:flex;align-items:center;gap:6px}
+.logo-progress-dots::after{content:'...';animation:dots 1.2s steps(4,end) infinite}
+@keyframes dots{0%,20%{content:'.'}40%{content:'..'}60%,100%{content:'...'}}
 
 .error-box{background:rgba(240,96,96,.1);border:1px solid rgba(240,96,96,.3);color:#f08080;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;display:none}
 .error-box.show{display:block}
@@ -265,7 +272,14 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 .trend-refresh{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;cursor:pointer;transition:all .15s}
 .trend-refresh:hover{color:var(--p3);border-color:var(--p5)}
-.trend-list{display:flex;flex-direction:column;gap:6px}
+.trend-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-right:4px}
+.trend-list::-webkit-scrollbar{width:4px}
+.trend-list::-webkit-scrollbar-track{background:transparent}
+.trend-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.trend-list::-webkit-scrollbar-thumb:hover{background:var(--p5)}
+/* Fade hint bottom */
+.trend-scroll-wrap{position:relative}
+.trend-scroll-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(to bottom,transparent,var(--surface));pointer-events:none;border-radius:0 0 8px 8px}
 .trend-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .15s;border:1px solid transparent}
 .trend-item:hover{background:var(--surface2);border-color:var(--border)}
 .trend-item.selected{background:var(--p1);border-color:var(--p5)}
@@ -334,8 +348,10 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       <span class="trend-search-icon">🔍</span>
     </div>
     <div class="trend-filter-label" id="trendFilterLabel"></div>
-    <div id="trendList" class="trend-list">
-      <div class="trend-loading">Memuat berita terkini...</div>
+    <div class="trend-scroll-wrap">
+      <div id="trendList" class="trend-list">
+        <div class="trend-loading">Memuat berita terkini...</div>
+      </div>
     </div>
     <div class="trend-empty" id="trendEmpty">Tidak ada berita yang cocok.</div>
     <div class="trend-selected-bar" id="trendSelectedBar">
@@ -834,19 +850,44 @@ async function removeBg(src) {
   });
 }
 
+function setLogoProcessing(on, label) {
+  const row = document.querySelector('.logo-upload-row');
+  const preview = document.getElementById('logoPreview');
+  const nameEl = document.getElementById('logoName');
+  const cta = document.querySelector('.logo-upload-cta');
+  if (on) {
+    row.classList.add('processing');
+    preview.innerHTML = '<div class="logo-spinner"></div>';
+    nameEl.innerHTML = `<span class="logo-progress">${label || 'Memproses...'}<span class="logo-progress-dots"></span></span>`;
+    if (cta) cta.style.visibility = 'hidden';
+  } else {
+    row.classList.remove('processing');
+    if (cta) cta.style.visibility = '';
+  }
+}
+
 function handleLogoUpload(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
     const raw = ev.target.result;
+
     const bgType = await detectLogoBg(raw);
     localStorage.setItem('karang_logo_bg', bgType);
-    // Hapus background otomatis kalau bukan transparan
-    brandLogo = (bgType !== 'transparent') ? await removeBg(raw) : raw;
+
+    if (bgType !== 'transparent') {
+      setLogoProcessing(true, 'Menghapus background');
+      brandLogo = await removeBg(raw);
+    } else {
+      brandLogo = raw;
+    }
+    setLogoProcessing(false);
+
     localStorage.setItem('karang_logo', brandLogo);
     applyLogo(brandLogo, file.name);
     document.getElementById('logoPosWrap').style.display = '';
-    brandColors = await extractBrandColors(raw); // pakai raw untuk warna asli
+
+    brandColors = await extractBrandColors(raw);
     if (brandColors) localStorage.setItem('karang_brand_colors', JSON.stringify(brandColors));
     applyBrandThemePill(brandColors);
   };
@@ -1136,19 +1177,19 @@ function hideError() { document.getElementById('errorBox').classList.remove('sho
 function esc(s = '') { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // Auto-filter berita ikut topik (debounced)
+// Hanya update search text, tidak trigger reload kalau list sudah ada isi
+// (menghindari layout shift → auto-scroll saat user sedang mengetik)
 let trendDebounce;
 document.getElementById('topic').addEventListener('input', e => {
   clearTimeout(trendDebounce);
   trendDebounce = setTimeout(() => {
     const q = e.target.value.trim();
     const searchEl = document.getElementById('trendSearch');
-    if (q.length > 2) {
+    if (q.length > 3 && searchEl.value !== q) {
       searchEl.value = q;
       filterTrends(q);
-    } else if (!searchEl.value) {
-      filterTrends('');
     }
-  }, 400);
+  }, 600);
 });
 
 document.getElementById('topic').addEventListener('keydown', e => {

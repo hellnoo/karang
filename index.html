@@ -246,6 +246,21 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .dl-btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* ── CAPTION / HASHTAG ───────────────────────────── */
+/* ── SLIDE EDIT PANEL ──────────────────────────────── */
+.slide-edit-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-top:16px;display:none}
+.slide-edit-panel.show{display:block}
+.edit-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.edit-panel-title{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.edit-panel-badge{background:var(--p1);border:1px solid var(--p5);color:var(--p4);font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;letter-spacing:.5px}
+.edit-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.edit-fields{grid-template-columns:1fr}}
+.edit-field label{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:5px}
+.edit-field input,.edit-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--ink);border-radius:8px;padding:8px 10px;font-size:12.5px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s,box-shadow .15s;line-height:1.55;resize:vertical}
+.edit-field textarea{min-height:68px}
+.edit-field input:focus,.edit-field textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.12)}
+.edit-field-full{grid-column:1/-1}
+
+/* ── TEXT CARDS ──────────────────────────────────── */
 .text-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
 @media(max-width:600px){.text-grid{grid-template-columns:1fr}}
 .text-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
@@ -254,6 +269,9 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .copy-btn{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:3px 10px;border-radius:8px;cursor:pointer;transition:all .15s}
 .copy-btn:hover{color:var(--p3);border-color:var(--p5)}.copy-btn.copied{color:var(--g5);border-color:var(--g5)}
 .card-body{font-size:13px;line-height:1.7;color:var(--ink2);white-space:pre-wrap}
+.copy-all-row{margin-top:16px;display:flex;justify-content:flex-end}
+.copy-all-btn{font-size:12px;font-weight:600;color:var(--p4);background:var(--p1);border:1px solid var(--p5);padding:7px 16px;border-radius:10px;cursor:pointer;transition:all .15s}
+.copy-all-btn:hover{background:var(--p5);color:#fff}.copy-all-btn.copied{color:var(--g5);border-color:var(--g5);background:rgba(62,207,142,.08)}
 
 /* ── TOGGLE ──────────────────────────────────────── */
 .toggle-track{width:40px;height:22px;border-radius:11px;background:var(--border2);transition:background .2s;position:relative;cursor:pointer;flex-shrink:0}
@@ -476,6 +494,27 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       <div class="slide-nav" id="slideNav"></div>
     </div>
 
+    <!-- EDIT SLIDE PANEL -->
+    <div class="slide-edit-panel" id="slideEditPanel">
+      <div class="edit-panel-head">
+        <div class="edit-panel-title">Edit Slide <span class="edit-panel-badge" id="editSlideNum">1</span></div>
+      </div>
+      <div class="edit-fields">
+        <div class="edit-field" id="editTagWrap" style="display:none">
+          <label>Label CTA</label>
+          <input type="text" id="editTag" placeholder="Yuk mulai sekarang!" oninput="liveEditSlide()">
+        </div>
+        <div class="edit-field edit-field-full" id="editHeadlineWrap">
+          <label>Headline</label>
+          <input type="text" id="editHeadline" oninput="liveEditSlide()">
+        </div>
+        <div class="edit-field edit-field-full">
+          <label>Body</label>
+          <textarea id="editBody" rows="3" oninput="liveEditSlide()"></textarea>
+        </div>
+      </div>
+    </div>
+
     <div class="text-grid">
       <div class="text-card">
         <div class="card-head">
@@ -491,6 +530,9 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
         </div>
         <div class="card-body" id="hashtags"></div>
       </div>
+    </div>
+    <div class="copy-all-row">
+      <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll()">Salin Caption + Hashtag</button>
     </div>
   </div>
 </main>
@@ -957,6 +999,7 @@ function renderResults(data) {
 
   // Tampilkan slide langsung tanpa nunggu background
   buildSlideUI();
+  populateEditPanel(0);
   document.getElementById('caption').textContent = data.caption || '';
   document.getElementById('hashtags').textContent = data.hashtags || '';
   document.getElementById('results').classList.add('show');
@@ -1111,6 +1154,7 @@ function goToSlide(idx) {
   thumbs[idx]?.classList.add('active');
   thumbs[idx]?.scrollIntoView({ block: 'nearest' });
   updateArrows();
+  populateEditPanel(idx);
 }
 function changeSlide(dir) { goToSlide(currentSlide + dir); }
 function updateArrows() {
@@ -1128,7 +1172,7 @@ async function renderToCanvas(idx) {
   area.appendChild(el);
   const w = 1080, h = format === '9:16' ? 1920 : 1080;
   await document.fonts.ready;
-  const canvas = await html2canvas(el, { width: w, height: h, scale: 1, useCORS: true, allowTaint: true, backgroundColor: null, logging: false });
+  const canvas = await html2canvas(el, { width: w, height: h, scale: 2, useCORS: true, allowTaint: true, backgroundColor: null, logging: false });
   area.innerHTML = '';
   return canvas;
 }
@@ -1160,11 +1204,58 @@ async function downloadAll() {
   } finally { btn.disabled = false; btn.textContent = '⬇ Semua (ZIP)'; }
 }
 
+// ── SLIDE EDIT ────────────────────────────────────
+function populateEditPanel(idx) {
+  const s = slidesData[idx];
+  if (!s) return;
+  document.getElementById('editSlideNum').textContent = idx + 1;
+  document.getElementById('editHeadline').value = s.headline || '';
+  document.getElementById('editBody').value = s.body || '';
+  const tagWrap = document.getElementById('editTagWrap');
+  const hlWrap  = document.getElementById('editHeadlineWrap');
+  if (s.type === 'cta') {
+    tagWrap.style.display = '';
+    hlWrap.classList.remove('edit-field-full'); // baris 2 kolom saat ada tag
+    document.getElementById('editTag').value = s.tag || '';
+  } else {
+    tagWrap.style.display = 'none';
+    hlWrap.classList.add('edit-field-full');
+  }
+  document.getElementById('slideEditPanel').classList.add('show');
+}
+
+function liveEditSlide() {
+  const s = slidesData[currentSlide];
+  if (!s) return;
+  s.headline = document.getElementById('editHeadline').value;
+  s.body     = document.getElementById('editBody').value;
+  if (s.type === 'cta') s.tag = document.getElementById('editTag').value;
+  // Re-render hanya slide aktif
+  const slides = document.querySelectorAll('#slideViewport .slide');
+  const old = slides[currentSlide];
+  if (!old) return;
+  const fmtClass = format === '9:16' ? 'fmt-916' : 'fmt-11';
+  const newEl = buildSlide(s, currentSlide, fmtClass, theme);
+  newEl.classList.add('active');
+  old.replaceWith(newEl);
+  // Update thumb teks (opsional: tidak re-render thumb supaya tidak jerk)
+}
+
 // ── UTILS ─────────────────────────────────────────
 function copyEl(btn, id) {
   navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
     btn.textContent = 'Disalin!'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = 'Salin'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+function copyAll() {
+  const cap  = document.getElementById('caption').textContent.trim();
+  const tags = document.getElementById('hashtags').textContent.trim();
+  if (!cap && !tags) return;
+  navigator.clipboard.writeText(cap + (tags ? '\n\n' + tags : '')).then(() => {
+    const btn = document.getElementById('copyAllBtn');
+    btn.textContent = '✓ Disalin!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Salin Caption + Hashtag'; btn.classList.remove('copied'); }, 1800);
   });
 }
 function setLoading(on) {

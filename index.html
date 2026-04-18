@@ -56,11 +56,13 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .theme-pill:hover{border-color:var(--border2)}
 .theme-pill.active{border-color:var(--p5);background:var(--surface2);color:var(--ink)}
 .theme-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
-.td-dark{background:linear-gradient(135deg,#160d3a,#7c6af7)}
+.td-dark {background:linear-gradient(135deg,#06041a,#7c6af7)}
+.td-light{background:linear-gradient(135deg,#f2e9d8,#c2631d)}
+.td-bold {background:linear-gradient(135deg,#000,#00c9a7)}
+.td-warm {background:linear-gradient(135deg,#0c0400,#e8692a)}
+.td-asap {background:linear-gradient(135deg,#04080f,#22d3ee)}
+.td-hutan{background:linear-gradient(135deg,#030905,#7cc52e)}
 .td-brand{background:linear-gradient(135deg,var(--brand-c1,#160d3a),var(--brand-c2,#7c6af7))}
-.td-light{background:linear-gradient(135deg,#ede8ff,#6d5ce7)}
-.td-bold{background:linear-gradient(135deg,#000,#a78bfa)}
-.td-warm{background:linear-gradient(135deg,#1a0a00,#f59e0b)}
 
 /* LOGO UPLOAD */
 .logo-upload-row{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface2);border:1px dashed var(--border2);border-radius:12px;cursor:pointer;transition:all .15s;margin-bottom:16px}
@@ -148,34 +150,58 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .slide[data-font="clean"]    {--s-fh:'Space Grotesk';--s-fb:'Space Grotesk';--s-fi:normal}
 .slide[data-font="luxury"]   {--s-fh:'Cormorant Garamond';--s-fb:'Outfit';--s-fi:italic}
 
-/* ── BACKGROUND IMAGE ────────────────────────────── */
-.s-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.10;filter:blur(8px) saturate(.4);mix-blend-mode:luminosity;pointer-events:none}
+/* ── BACKGROUND MESH ─────────────────────────────── */
+.s-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:blur(55px);pointer-events:none}
+.slide[data-theme="light"] .s-bg-img{opacity:.25;filter:blur(45px)}
 
 /* ── SLIDE THEMES (CSS variables) ───────────────── */
+/* Kelam — deep indigo space */
 .slide[data-theme="dark"]{
-  --s-bg:linear-gradient(155deg,#0c091f 0%,#160d3a 55%,#0a0720 100%);
-  --s-line:linear-gradient(90deg,#7c6af7,#a78bfa,#6366f1);
-  --s-text:#ffffff; --s-text2:rgba(190,185,255,.8); --s-muted:rgba(157,143,255,.5);
-  --s-accent:#7c6af7; --s-wm:rgba(124,106,247,.055); --s-border:rgba(124,106,247,.18);
+  --s-bg:linear-gradient(155deg,#06041a 0%,#0e0930 55%,#050316 100%);
+  --s-line:linear-gradient(90deg,#7c6af7,#a78bfa,#818cf8);
+  --s-text:#f0eeff; --s-text2:rgba(200,190,255,.75); --s-muted:rgba(160,145,255,.45);
+  --s-accent:#8b5cf6; --s-wm:rgba(124,106,247,.05); --s-border:rgba(139,92,246,.2);
+  --s-logo-blend:screen;
 }
-.slide[data-theme="dark"]{--s-logo-blend:screen}
-.slide[data-theme="light"]{--s-logo-blend:multiply;
-  --s-bg:linear-gradient(155deg,#f5f2ff 0%,#ebe4ff 55%,#f0ebff 100%);
-  --s-line:linear-gradient(90deg,#6d5ce7,#8b5cf6,#4f46e5);
-  --s-text:#180f40; --s-text2:rgba(40,20,100,.68); --s-muted:rgba(80,55,160,.55);
-  --s-accent:#6d5ce7; --s-wm:rgba(80,55,160,.055); --s-border:rgba(80,55,160,.18);
+/* Krim — warm editorial cream */
+.slide[data-theme="light"]{
+  --s-bg:linear-gradient(155deg,#f9f4ec 0%,#f2e9d8 55%,#fdf8f0 100%);
+  --s-line:linear-gradient(90deg,#c2631d,#d97706,#92400e);
+  --s-text:#1a0e04; --s-text2:rgba(60,28,8,.62); --s-muted:rgba(120,55,15,.45);
+  --s-accent:#c2631d; --s-wm:rgba(194,99,29,.06); --s-border:rgba(194,99,29,.15);
+  --s-logo-blend:multiply;
 }
+/* Hitam — brutalist black + electric teal */
 .slide[data-theme="bold"]{
-  --s-bg:linear-gradient(155deg,#000000 0%,#07030f 100%);
-  --s-line:linear-gradient(90deg,#a78bfa,#f472b6,#60a5fa);
-  --s-text:#ffffff; --s-text2:rgba(255,255,255,.65); --s-muted:rgba(200,190,255,.45);
-  --s-accent:#a78bfa; --s-wm:rgba(167,139,250,.055); --s-border:rgba(167,139,250,.2);
+  --s-bg:linear-gradient(155deg,#000000 0%,#030303 100%);
+  --s-line:linear-gradient(90deg,#00c9a7,#22d3ee,#00b4d8);
+  --s-text:#ffffff; --s-text2:rgba(255,255,255,.6); --s-muted:rgba(0,201,167,.4);
+  --s-accent:#00c9a7; --s-wm:rgba(0,201,167,.05); --s-border:rgba(0,201,167,.18);
+  --s-logo-blend:screen;
 }
+/* Bara — moody ember */
 .slide[data-theme="warm"]{
-  --s-bg:linear-gradient(155deg,#120800 0%,#2a1200 55%,#0e0600 100%);
-  --s-line:linear-gradient(90deg,#f59e0b,#ef4444,#f97316);
-  --s-text:#fff8ed; --s-text2:rgba(255,230,180,.8); --s-muted:rgba(245,158,11,.55);
-  --s-accent:#f59e0b; --s-wm:rgba(245,158,11,.055); --s-border:rgba(245,158,11,.2);
+  --s-bg:linear-gradient(155deg,#0c0400 0%,#1c0900 55%,#080200 100%);
+  --s-line:linear-gradient(90deg,#e8692a,#ef4444,#f97316);
+  --s-text:#fff5ee; --s-text2:rgba(255,210,175,.75); --s-muted:rgba(232,105,42,.45);
+  --s-accent:#e8692a; --s-wm:rgba(232,105,42,.055); --s-border:rgba(232,105,42,.22);
+  --s-logo-blend:screen;
+}
+/* Asap — midnight slate + electric cyan */
+.slide[data-theme="asap"]{
+  --s-bg:linear-gradient(155deg,#04080f 0%,#080f1a 55%,#030710 100%);
+  --s-line:linear-gradient(90deg,#22d3ee,#0ea5e9,#06b6d4);
+  --s-text:#e2f8ff; --s-text2:rgba(170,238,255,.72); --s-muted:rgba(6,182,212,.45);
+  --s-accent:#22d3ee; --s-wm:rgba(34,211,238,.05); --s-border:rgba(34,211,238,.18);
+  --s-logo-blend:screen;
+}
+/* Hutan — dark forest + citrus lime */
+.slide[data-theme="hutan"]{
+  --s-bg:linear-gradient(155deg,#030905 0%,#060f07 55%,#020703 100%);
+  --s-line:linear-gradient(90deg,#7cc52e,#84cc16,#4ade80);
+  --s-text:#f0fdf2; --s-text2:rgba(185,245,185,.72); --s-muted:rgba(124,197,46,.45);
+  --s-accent:#7cc52e; --s-wm:rgba(124,197,46,.055); --s-border:rgba(124,197,46,.2);
+  --s-logo-blend:screen;
 }
 
 /* ── SLIDE STRUCTURE (shared across all types) ───── */
@@ -418,22 +444,24 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
     <div style="margin-bottom:16px">
       <label>Tema Slide</label>
       <div class="pill-grid" id="themeGrid">
-        <button class="theme-pill active" data-val="dark"><span class="theme-dot td-dark"></span>Gelap</button>
-        <button class="theme-pill" data-val="light"><span class="theme-dot td-light"></span>Terang</button>
-        <button class="theme-pill" data-val="bold"><span class="theme-dot td-bold"></span>Bold</button>
-        <button class="theme-pill" data-val="warm"><span class="theme-dot td-warm"></span>Hangat</button>
+        <button class="theme-pill active" data-val="dark"><span class="theme-dot td-dark"></span>Kelam</button>
+        <button class="theme-pill" data-val="light"><span class="theme-dot td-light"></span>Krim</button>
+        <button class="theme-pill" data-val="bold"><span class="theme-dot td-bold"></span>Hitam</button>
+        <button class="theme-pill" data-val="warm"><span class="theme-dot td-warm"></span>Bara</button>
+        <button class="theme-pill" data-val="asap"><span class="theme-dot td-asap"></span>Asap</button>
+        <button class="theme-pill" data-val="hutan"><span class="theme-dot td-hutan"></span>Hutan</button>
         <button class="theme-pill" data-val="brand" id="brandThemePill" style="opacity:.4" title="Upload logo dulu untuk aktifkan Brand theme"><span class="theme-dot td-brand" id="brandThemeDot"></span>Brand</button>
       </div>
     </div>
 
     <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
       <div>
-        <div style="font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Background AI</div>
-        <div style="font-size:11px;color:var(--muted)">Gambar samar sesuai topik dari Pollinations.ai</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Mesh Background</div>
+        <div style="font-size:11px;color:var(--muted)">Gradien cahaya sesuai warna tema</div>
       </div>
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--ink2)">
         <div class="toggle-wrap">
-          <input type="checkbox" id="bgToggle" checked style="display:none" onchange="refreshSlides()">
+          <input type="checkbox" id="bgToggle" checked style="display:none">
           <div class="toggle-track" onclick="document.getElementById('bgToggle').click()"></div>
         </div>
         <span id="bgToggleLabel">Aktif</span>
@@ -665,7 +693,7 @@ function saveAccountName() {
   refreshSlides();
 }
 let slidesData = [], currentSlide = 0;
-let bgImageUrl = null, bgTopic = '';
+let bgImageUrl = null;
 
 if (brandLogo) {
   applyLogo(brandLogo);
@@ -678,20 +706,41 @@ if (brandLogo) {
   }
 }
 
-// ── BACKGROUND FETCH ──────────────────────────────
-async function fetchBgImage(topic) {
-  const el = document.getElementById('bgToggle');
-  if (!el.checked) return null;
+// ── MESH GRADIENT BACKGROUND ──────────────────────
+// Generate inline SVG mesh gradient — instant, no API, modern look
+const MESH_PALETTES = {
+  dark:  ['#8b5cf6','#4f46e5','#6366f1'],
+  light: ['#c2631d','#d97706','#b45309'],
+  bold:  ['#00c9a7','#0ea5e9','#22d3ee'],
+  warm:  ['#e8692a','#ef4444','#f97316'],
+  asap:  ['#22d3ee','#0ea5e9','#06b6d4'],
+  hutan: ['#7cc52e','#4ade80','#84cc16'],
+};
+
+function generateMeshBg() {
+  let colors = MESH_PALETTES[theme] || MESH_PALETTES.dark;
+  if (theme === 'brand' && brandColors) {
+    colors = [brandColors.accent, brandColors.bg2 || brandColors.accent, brandColors.accent];
+  }
+  const [c1, c2, c3] = colors;
+  const s = Math.random();
   const w = 1080, h = format === '9:16' ? 1920 : 1080;
-  const prompt = encodeURIComponent(`cinematic abstract texture background inspired by "${topic}", bokeh blur, no text, no words, no letters, no typography, no watermark, soft light, minimal`);
-  const seed = Math.floor(Math.random() * 9999);
-  const url = `https://image.pollinations.ai/prompt/${prompt}?width=${w}&height=${h}&nologo=true&seed=${seed}`;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const blob = await res.blob();
-    return URL.createObjectURL(blob);
-  } catch { return null; }
+  // 5 radial blobs at semi-random positions
+  const blobs = [
+    [w*(.08+s*.18), h*(.08+s*.14), w*.52, c1, .55],
+    [w*(.72+s*.14), h*(.04+s*.18), w*.46, c2, .42],
+    [w*(.78+s*.1),  h*(.65+s*.18), w*.54, c1, .32],
+    [w*(s*.12),     h*(.75+s*.14), w*.50, c3, .28],
+    [w*(.42+s*.14), h*(.40+s*.18), w*.40, c2, .20],
+  ];
+  const defs = blobs.map(([x,y,r,c,op],i) =>
+    `<radialGradient id="m${i}" cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(0)}" gradientUnits="userSpaceOnUse">` +
+    `<stop offset="0%" stop-color="${c}" stop-opacity="${op}"/>` +
+    `<stop offset="100%" stop-color="${c}" stop-opacity="0"/></radialGradient>`
+  ).join('');
+  const rects = blobs.map((_,i) => `<rect width="${w}" height="${h}" fill="url(#m${i})"/>`).join('');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"><defs>${defs}</defs>${rects}</svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
 // ── PILL SELECTORS ────────────────────────────────
@@ -727,6 +776,7 @@ if (brandLogo) document.getElementById('logoPosWrap').style.display = '';
 // Toggle label sync
 document.getElementById('bgToggle').addEventListener('change', function() {
   document.getElementById('bgToggleLabel').textContent = this.checked ? 'Aktif' : 'Nonaktif';
+  refreshSlides();
 });
 
 // ── COLOR EXTRACTION ──────────────────────────────
@@ -1005,15 +1055,11 @@ function renderResults(data) {
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Fetch background di belakang (tidak blokir UI)
-  if (document.getElementById('bgToggle').checked && (topic !== bgTopic || !bgImageUrl)) {
-    bgTopic = topic;
-    bgImageUrl = null;
-    fetchBgImage(topic).then(url => {
-      if (url) { bgImageUrl = url; buildSlideUI(); goToSlide(currentSlide); }
-    });
-  } else {
-    bgTopic = topic;
+  // Mesh background — sync, langsung render ulang
+  if (document.getElementById('bgToggle').checked) {
+    bgImageUrl = generateMeshBg();
+    buildSlideUI();
+    goToSlide(0);
   }
 }
 
@@ -1048,15 +1094,14 @@ function buildSlideUI() {
 
 function refreshSlides() {
   if (!slidesData.length) return;
-  // Build langsung pakai bgImageUrl yang sudah ada (tidak nunggu fetch)
+  // Regenerate mesh bg saat tema/format/toggle berubah
+  if (document.getElementById('bgToggle').checked) {
+    bgImageUrl = generateMeshBg();
+  } else {
+    bgImageUrl = null;
+  }
   buildSlideUI();
   goToSlide(Math.min(currentSlide, slidesData.length - 1));
-  // Fetch bg di background jika belum ada dan toggle aktif
-  if (document.getElementById('bgToggle').checked && !bgImageUrl) {
-    fetchBgImage(bgTopic || document.getElementById('topic').value.trim()).then(url => {
-      if (url) { bgImageUrl = url; buildSlideUI(); goToSlide(currentSlide); }
-    });
-  }
 }
 
 // ── BUILD SINGLE SLIDE HTML ───────────────────────

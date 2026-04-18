@@ -272,14 +272,13 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 .trend-refresh{font-size:11px;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;cursor:pointer;transition:all .15s}
 .trend-refresh:hover{color:var(--p3);border-color:var(--p5)}
-.trend-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-right:4px}
+.trend-scroll-wrap{position:relative;height:300px;flex-shrink:0}
+.trend-scroll-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(to bottom,transparent,var(--surface));pointer-events:none;border-radius:0 0 8px 8px;z-index:1}
+.trend-list{display:flex;flex-direction:column;gap:6px;height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-right:4px}
 .trend-list::-webkit-scrollbar{width:4px}
 .trend-list::-webkit-scrollbar-track{background:transparent}
 .trend-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 .trend-list::-webkit-scrollbar-thumb:hover{background:var(--p5)}
-/* Fade hint bottom */
-.trend-scroll-wrap{position:relative}
-.trend-scroll-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(to bottom,transparent,var(--surface));pointer-events:none;border-radius:0 0 8px 8px}
 .trend-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all .15s;border:1px solid transparent}
 .trend-item:hover{background:var(--surface2);border-color:var(--border)}
 .trend-item.selected{background:var(--p1);border-color:var(--p5)}
@@ -1176,21 +1175,8 @@ function showError(msg) { const el = document.getElementById('errorBox'); el.tex
 function hideError() { document.getElementById('errorBox').classList.remove('show'); }
 function esc(s = '') { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// Auto-filter berita ikut topik (debounced)
-// Hanya update search text, tidak trigger reload kalau list sudah ada isi
-// (menghindari layout shift → auto-scroll saat user sedang mengetik)
-let trendDebounce;
-document.getElementById('topic').addEventListener('input', e => {
-  clearTimeout(trendDebounce);
-  trendDebounce = setTimeout(() => {
-    const q = e.target.value.trim();
-    const searchEl = document.getElementById('trendSearch');
-    if (q.length > 3 && searchEl.value !== q) {
-      searchEl.value = q;
-      filterTrends(q);
-    }
-  }, 600);
-});
+// Topic textarea dan trend search sengaja dipisahkan — tidak ada auto-sync
+// supaya tidak ada layout shift / scroll saat mengetik topik
 
 document.getElementById('topic').addEventListener('keydown', e => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) openFormatModal();

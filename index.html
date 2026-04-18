@@ -171,9 +171,14 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .slide[data-font="clean"]    {--s-fh:'Space Grotesk';--s-fb:'Space Grotesk';--s-fi:normal}
 .slide[data-font="luxury"]   {--s-fh:'Cormorant Garamond';--s-fb:'Outfit';--s-fi:italic}
 
-/* ── BACKGROUND MESH ─────────────────────────────── */
+/* ── BACKGROUND ──────────────────────────────────── */
+/* Mesh gradient (fallback / tema light) */
 .s-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:blur(55px);pointer-events:none}
 .slide[data-theme="light"] .s-bg-img{opacity:.25;filter:blur(45px)}
+/* Foto Pexels */
+.s-bg-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.s-bg-overlay{position:absolute;inset:0;background:linear-gradient(170deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,.68) 100%);pointer-events:none}
+.slide[data-theme="light"] .s-bg-overlay{background:linear-gradient(170deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.7) 100%)}
 
 /* ── SLIDE THEMES (CSS variables) ───────────────── */
 /* Kelam — deep indigo space */
@@ -480,8 +485,8 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
 
     <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
       <div>
-        <div style="font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Mesh Background</div>
-        <div style="font-size:11px;color:var(--muted)">Gradien cahaya sesuai warna tema</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px">Background Foto</div>
+        <div style="font-size:11px;color:var(--muted)">Foto relevan dari Pexels sesuai topik</div>
       </div>
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;color:var(--ink2)">
         <div class="toggle-wrap">
@@ -790,7 +795,9 @@ function saveAccountName() {
   refreshSlides();
 }
 let slidesData = [], currentSlide = 0;
-let bgImageUrl = null;
+let bgImageUrl = null;   // mesh gradient data URI
+let bgPhotoUrl  = null;  // Pexels photo URL
+let bgPhotoCredit = '';  // nama fotografer
 
 if (brandLogo) {
   applyLogo(brandLogo);
@@ -838,6 +845,21 @@ function generateMeshBg() {
   const rects = blobs.map((_,i) => `<rect width="${w}" height="${h}" fill="url(#m${i})"/>`).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"><defs>${defs}</defs>${rects}</svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+async function fetchPexelsBg(topic) {
+  try {
+    const orientation = format === '9:16' ? 'portrait' : 'square';
+    const r = await fetch(`/api/pexels?q=${encodeURIComponent(topic)}&orientation=${orientation}`);
+    if (!r.ok) return;
+    const data = await r.json();
+    if (data.url) {
+      bgPhotoUrl    = data.url;
+      bgPhotoCredit = data.photographer || '';
+      buildSlideUI();
+      goToSlide(currentSlide);
+    }
+  } catch { /* gagal diam-diam, pakai mesh */ }
 }
 
 // ── PILL SELECTORS ────────────────────────────────
@@ -1160,11 +1182,13 @@ function renderResults(data) {
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Mesh background — sync, langsung render ulang
+  // Background: mesh dulu (instant), lalu fetch foto Pexels di belakang
+  bgPhotoUrl = null;
   if (document.getElementById('bgToggle').checked) {
-    bgImageUrl = generateMeshBg();
-    buildSlideUI();
-    goToSlide(0);
+    bgImageUrl = generateMeshBg(); // langsung tampil
+    buildSlideUI(); goToSlide(0);
+    const topic = document.getElementById('topic').value.trim();
+    fetchPexelsBg(topic); // ganti dengan foto setelah dapat
   }
 }
 
@@ -1199,11 +1223,14 @@ function buildSlideUI() {
 
 function refreshSlides() {
   if (!slidesData.length) return;
-  // Regenerate mesh bg saat tema/format/toggle berubah
   if (document.getElementById('bgToggle').checked) {
-    bgImageUrl = generateMeshBg();
+    bgImageUrl = generateMeshBg(); // mesh sementara
+    if (!bgPhotoUrl) { // fetch foto baru hanya kalau belum ada
+      const topic = document.getElementById('topic').value.trim();
+      if (topic) fetchPexelsBg(topic);
+    }
   } else {
-    bgImageUrl = null;
+    bgImageUrl = null; bgPhotoUrl = null;
   }
   buildSlideUI();
   goToSlide(Math.min(currentSlide, slidesData.length - 1));
@@ -1261,9 +1288,16 @@ function buildSlide(s, i, fmtClass, t) {
   const acct = accountName ? `<div class="s-bottom-account">${esc(accountName)}</div>` : '';
   const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}${acct}</div><div class="s-counter">${i+1} / ${total}</div></div>`;
   const bgEnabled = document.getElementById('bgToggle').checked;
-  const bgHtml = bgEnabled && bgImageUrl
-    ? `<img class="s-bg-img" src="${bgImageUrl}" alt="">`
-    : '';
+  let bgHtml = '';
+  if (bgEnabled) {
+    if (bgPhotoUrl) {
+      // Foto Pexels — full cover + dark overlay
+      bgHtml = `<img class="s-bg-photo" src="${bgPhotoUrl}" alt=""><div class="s-bg-overlay"></div>`;
+    } else if (bgImageUrl) {
+      // Mesh gradient sementara
+      bgHtml = `<img class="s-bg-img" src="${bgImageUrl}" alt="">`;
+    }
+  }
   const base = `<div class="s-bg"></div>${bgHtml}${overlayLogo}<div class="s-topline"></div><div class="s-num">${num}</div>`;
 
   if (s.type === 'hook') {

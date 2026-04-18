@@ -89,11 +89,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,#0a0a0f);z-index:1;pointer-events:none}
 
 /* Scroll hint */
-.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;animation:fadeUp .6s .8s ease both;cursor:pointer;opacity:.45;transition:opacity .2s;z-index:2}
-.hero-scroll:hover{opacity:.8}
-.hero-scroll span{font-size:10px;letter-spacing:1.5px;color:rgba(157,143,255,.8);text-transform:uppercase}
-.hero-scroll-arrow{width:20px;height:20px;border-right:1.5px solid rgba(157,143,255,.7);border-bottom:1.5px solid rgba(157,143,255,.7);transform:rotate(45deg);animation:scrollBounce 1.8s ease-in-out infinite}
-@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0)}50%{transform:rotate(45deg) translateY(5px)}}
+/* Scroll hint — spaceship */
+.hero-scroll{position:absolute;bottom:20px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:4px;animation:fadeUp .6s .8s ease both;cursor:pointer;opacity:.55;transition:opacity .2s;z-index:2}
+.hero-scroll:hover{opacity:1}
+.hero-scroll-label{font-size:9px;letter-spacing:2px;color:rgba(157,143,255,.65);text-transform:uppercase;margin-bottom:2px}
+
+/* Ship wrapper floats */
+.ship-wrap{display:flex;flex-direction:column;align-items:center;gap:0;animation:shipFloat 2.8s ease-in-out infinite}
+@keyframes shipFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+/* Ship SVG */
+.ship-svg{width:28px;height:auto;display:block}
+
+/* Engine flames — at top since ship points down */
+.ship-flame-o{animation:flameFlick .25s ease-in-out infinite alternate;transform-origin:50% 100%}
+.ship-flame-i{animation:flameFlick .18s ease-in-out infinite alternate-reverse;transform-origin:50% 100%}
+@keyframes flameFlick{from{transform:scaleY(.7) scaleX(.9);opacity:.5}to{transform:scaleY(1.25) scaleX(1.05);opacity:1}}
+
+/* Laser beam shoots downward from nose */
+.ship-laser{width:2px;background:linear-gradient(to bottom,rgba(189,176,255,.95),rgba(124,106,247,.2),transparent);border-radius:2px;animation:laserShoot 1s ease-in-out infinite;transform-origin:top center}
+@keyframes laserShoot{0%{height:0;opacity:0}20%{height:22px;opacity:1}60%{height:18px;opacity:.75}100%{height:0;opacity:0}}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
@@ -552,8 +567,42 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       <p class="hero-sub" id="heroSubTrial"></p>
     </div>
     <div class="hero-scroll" onclick="document.querySelector('.trend-card').scrollIntoView({behavior:'smooth'})">
-      <span>Scroll</span>
-      <div class="hero-scroll-arrow"></div>
+      <span class="hero-scroll-label">Scroll</span>
+      <div class="ship-wrap">
+        <svg class="ship-svg" viewBox="0 0 26 34" fill="none">
+          <defs>
+            <linearGradient id="ship-body" x1="13" y1="2" x2="13" y2="34" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#28185a"/><stop offset="1" stop-color="#130a32"/>
+            </linearGradient>
+            <radialGradient id="ship-cpit" cx="50%" cy="50%" r="50%">
+              <stop stop-color="#bdb4ff" stop-opacity=".35"/><stop offset="1" stop-color="#7c6af7" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Engine flames at top (ship points down) -->
+          <path class="ship-flame-o" d="M9.5 4.5 Q13 -3 16.5 4.5" fill="rgba(124,106,247,.55)"/>
+          <path class="ship-flame-i" d="M11.2 3.8 Q13 -1 14.8 3.8" fill="rgba(200,192,255,.85)"/>
+          <!-- Body -->
+          <path d="M13 33 C11 27 8 21 8 16 L8.5 9.5 C9 5.5 11 2.5 13 2 C15 2.5 17 5.5 17.5 9.5 L18 16 C18 21 15 27 13 33Z" fill="url(#ship-body)" stroke="#7c6af7" stroke-width="1.1"/>
+          <!-- Body centre stripe -->
+          <line x1="13" y1="8" x2="13" y2="26" stroke="rgba(157,143,255,.25)" stroke-width=".7"/>
+          <!-- Wings -->
+          <path d="M8 17 L1.5 23.5 L8 21.5Z" fill="#1c1244" stroke="#5a44b0" stroke-width=".75"/>
+          <path d="M18 17 L24.5 23.5 L18 21.5Z" fill="#1c1244" stroke="#5a44b0" stroke-width=".75"/>
+          <!-- Wing glow edge -->
+          <line x1="8" y1="18" x2="3" y2="23" stroke="#7c6af7" stroke-width=".5" opacity=".5"/>
+          <line x1="18" y1="18" x2="23" y2="23" stroke="#7c6af7" stroke-width=".5" opacity=".5"/>
+          <!-- Cockpit -->
+          <circle cx="13" cy="13" r="4" fill="url(#ship-cpit)"/>
+          <circle cx="13" cy="13" r="3" stroke="#9d8fff" stroke-width=".9" fill="#0b0620"/>
+          <circle cx="11.8" cy="11.8" r="1.1" fill="rgba(189,176,255,.28)"/>
+          <!-- Nose glow -->
+          <circle cx="13" cy="33" r="1.5" fill="rgba(157,143,255,.45)"/>
+          <!-- Engine nozzle top -->
+          <rect x="10.5" y="2" width="5" height="1.5" rx=".75" fill="rgba(157,143,255,.35)"/>
+        </svg>
+        <!-- Laser burst from nose -->
+        <div class="ship-laser"></div>
+      </div>
     </div>
   </div>
 

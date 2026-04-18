@@ -151,7 +151,8 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
   --s-text:#ffffff; --s-text2:rgba(190,185,255,.8); --s-muted:rgba(157,143,255,.5);
   --s-accent:#7c6af7; --s-wm:rgba(124,106,247,.055); --s-border:rgba(124,106,247,.18);
 }
-.slide[data-theme="light"]{
+.slide[data-theme="dark"]{--s-logo-blend:screen}
+.slide[data-theme="light"]{--s-logo-blend:multiply;
   --s-bg:linear-gradient(155deg,#f5f2ff 0%,#ebe4ff 55%,#f0ebff 100%);
   --s-line:linear-gradient(90deg,#6d5ce7,#8b5cf6,#4f46e5);
   --s-text:#180f40; --s-text2:rgba(40,20,100,.68); --s-muted:rgba(80,55,160,.55);
@@ -177,9 +178,16 @@ textarea:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,106,247,.15)
 .s-wm{position:absolute;font-family:'Instrument Serif',serif;font-size:480px;line-height:1;color:var(--s-wm);right:-30px;bottom:60px;user-select:none;pointer-events:none}
 .s-bottom{position:absolute;bottom:0;left:0;right:0;height:116px;padding:0 76px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--s-border)}
 .s-bottom-logo{display:flex;align-items:center;gap:14px}
+/* Logo: bottom bar */
 .s-logo-badge{display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:6px 10px;backdrop-filter:blur(6px)}
 .s-logo-badge img{height:48px;max-width:140px;object-fit:contain;display:block}
 .slide[data-theme="light"] .s-logo-badge{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.12)}
+/* Logo: center watermark */
+.s-logo-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.s-logo-center img{width:340px;max-width:60%;opacity:.07;filter:grayscale(.3);object-fit:contain}
+/* Logo: corner */
+.s-logo-corner{position:absolute;top:56px;left:76px;pointer-events:none}
+.s-logo-corner img{height:72px;max-width:180px;object-fit:contain;opacity:.9;mix-blend-mode:var(--s-logo-blend,screen)}
 
 /* ACCOUNT NAME di bottom bar */
 .s-bottom-account{font-size:20px;font-weight:600;color:var(--s-muted);letter-spacing:.5px}
@@ -410,10 +418,18 @@ footer{text-align:center;padding:24px;color:var(--muted);font-size:12px;border-t
       <div class="logo-preview-box" id="logoPreview"><span style="font-size:20px;opacity:.5">🖼️</span></div>
       <div class="logo-upload-info">
         <strong id="logoName">Upload Logo Brand</strong>
-        <span>Muncul di pojok setiap slide — PNG, JPG, SVG</span>
+        <span>PNG transparan lebih baik — background otomatis dihapus</span>
       </div>
       <span class="logo-upload-cta">Pilih File</span>
       <button class="logo-clear-btn" id="logoClear" onclick="clearLogo(event)">Hapus</button>
+    </div>
+    <div id="logoPosWrap" style="display:none;margin-top:10px">
+      <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">POSISI LOGO</label>
+      <div class="pill-grid" id="logoPosGrid">
+        <button class="pill active" data-val="bottom">Bawah</button>
+        <button class="pill" data-val="center">Tengah (bg)</button>
+        <button class="pill" data-val="corner">Pojok Atas</button>
+      </div>
     </div>
 
     <div id="errorBox" class="error-box"></div>
@@ -577,6 +593,7 @@ let theme = 'dark', format = '1:1', font = 'elegan';
 let brandLogo = localStorage.getItem('karang_logo') || null;
 let accountName = localStorage.getItem('karang_account') || '';
 let brandColors = JSON.parse(localStorage.getItem('karang_brand_colors') || 'null');
+let logoPosition = localStorage.getItem('karang_logo_pos') || 'bottom';
 
 // Init account name
 if (accountName) document.addEventListener('DOMContentLoaded', () => {
@@ -637,6 +654,18 @@ makePillGroup('themeGrid',   v => {
   }
   hideError(); theme = v; refreshSlides();
 });
+makePillGroup('logoPosGrid', v => {
+  logoPosition = v;
+  localStorage.setItem('karang_logo_pos', v);
+  refreshSlides();
+});
+// Init posisi pill aktif dari localStorage
+if (logoPosition !== 'bottom') {
+  document.querySelectorAll('#logoPosGrid [data-val]').forEach(b => b.classList.remove('active'));
+  const activePos = document.querySelector(`#logoPosGrid [data-val="${logoPosition}"]`);
+  if (activePos) activePos.classList.add('active');
+}
+if (brandLogo) document.getElementById('logoPosWrap').style.display = '';
 
 // Toggle label sync
 document.getElementById('bgToggle').addEventListener('change', function() {
@@ -762,16 +791,62 @@ async function detectLogoBg(src) {
   });
 }
 
+// Hapus background logo pakai canvas (flood-fill dari sudut)
+async function removeBg(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const w = img.naturalWidth, h = img.naturalHeight;
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const ctx = cv.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const d = imgData.data;
+        // Ambil warna bg dari sudut kiri atas
+        const bgR = d[0], bgG = d[1], bgB = d[2];
+        const thr = 38; // threshold kemiripan warna
+        // Flood fill dari 4 sudut
+        const fill = (startX, startY) => {
+          const stack = [[startX, startY]];
+          const visited = new Uint8Array(w * h);
+          while (stack.length) {
+            const [x, y] = stack.pop();
+            if (x < 0 || x >= w || y < 0 || y >= h) continue;
+            const idx = (y * w + x) * 4;
+            if (visited[y * w + x]) continue;
+            visited[y * w + x] = 1;
+            const dr = d[idx]-bgR, dg = d[idx+1]-bgG, db = d[idx+2]-bgB;
+            const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+            if (dist > thr) continue;
+            d[idx+3] = 0;
+            stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+          }
+        };
+        fill(0,0); fill(w-1,0); fill(0,h-1); fill(w-1,h-1);
+        ctx.putImageData(imgData, 0, 0);
+        resolve(cv.toDataURL('image/png'));
+      } catch { resolve(src); }
+    };
+    img.onerror = () => resolve(src);
+    img.src = src;
+  });
+}
+
 function handleLogoUpload(e) {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = async ev => {
-    brandLogo = ev.target.result;
-    localStorage.setItem('karang_logo', brandLogo);
-    const bgType = await detectLogoBg(brandLogo);
+    const raw = ev.target.result;
+    const bgType = await detectLogoBg(raw);
     localStorage.setItem('karang_logo_bg', bgType);
+    // Hapus background otomatis kalau bukan transparan
+    brandLogo = (bgType !== 'transparent') ? await removeBg(raw) : raw;
+    localStorage.setItem('karang_logo', brandLogo);
     applyLogo(brandLogo, file.name);
-    brandColors = await extractBrandColors(brandLogo);
+    document.getElementById('logoPosWrap').style.display = '';
+    brandColors = await extractBrandColors(raw); // pakai raw untuk warna asli
     if (brandColors) localStorage.setItem('karang_brand_colors', JSON.stringify(brandColors));
     applyBrandThemePill(brandColors);
   };
@@ -781,7 +856,7 @@ function applyLogo(src, name) {
   document.getElementById('logoPreview').innerHTML = `<img src="${src}" alt="logo">`;
   document.getElementById('logoName').textContent = name || 'Logo tersimpan';
   document.getElementById('logoClear').classList.add('show');
-  // Restore brand pill if colors saved
+  document.getElementById('logoPosWrap').style.display = '';
   if (brandColors) applyBrandThemePill(brandColors);
 }
 function clearLogo(e) {
@@ -793,6 +868,7 @@ function clearLogo(e) {
   document.getElementById('logoName').textContent = 'Upload Logo Brand';
   document.getElementById('logoClear').classList.remove('show');
   document.getElementById('logoInput').value = '';
+  document.getElementById('logoPosWrap').style.display = 'none';
   // Sembunyikan brand pill, kembali ke dark
   const pill = document.getElementById('brandThemePill');
   pill.style.opacity = '.4'; pill.setAttribute('title','Upload logo dulu untuk aktifkan Brand theme'); pill.classList.remove('active');
@@ -923,30 +999,39 @@ function buildSlide(s, i, fmtClass, t) {
   const total = slidesData.length;
   const num = String(i + 1).padStart(2, '0');
 
-  // Logo rendering: frosted glass badge untuk semua jenis logo
-  // Blend mode hanya untuk transparent logos tanpa badge
-  const bgType = localStorage.getItem('karang_logo_bg') || 'transparent';
+  // Logo rendering — tergantung logoPosition ('bottom' | 'center' | 'corner')
+  // Setelah removeBg(), brandLogo sudah transparan; gunakan langsung.
+  const blend = t === 'light' ? 'multiply' : 'screen';
+  const logoImg = brandLogo
+    ? `<img src="${brandLogo}" alt="brand" style="height:56px;max-width:150px;object-fit:contain;mix-blend-mode:${blend};opacity:.9">`
+    : null;
+
+  let overlayLogo = '';  // center / corner logo (di dalam slide, di luar bottom bar)
   let brand;
-  if (brandLogo) {
-    if (bgType === 'transparent') {
-      // Logo transparan: langsung tanpa badge, pakai blend mode
-      const blend = t === 'light' ? 'multiply' : 'screen';
-      brand = `<img src="${brandLogo}" alt="brand" style="height:56px;max-width:150px;object-fit:contain;mix-blend-mode:${blend};opacity:.9">`;
-    } else {
-      // Logo dengan background (light/dark/colored): frosted glass badge
-      // Preserve warna logo asli, container yang menyesuaikan tema
-      brand = `<div class="s-logo-badge"><img src="${brandLogo}" alt="brand"></div>`;
-    }
-  } else {
+
+  if (!brandLogo) {
     brand = `<span class="s-bottom-name">Karang</span>`;
+  } else if (logoPosition === 'center') {
+    // Logo jadi watermark transparan di tengah slide
+    overlayLogo = `<div class="s-logo-center"><img src="${brandLogo}" alt="brand"></div>`;
+    // Bottom bar hanya nama akun, tanpa logo
+    brand = accountName ? '' : `<span class="s-bottom-name">Karang</span>`;
+  } else if (logoPosition === 'corner') {
+    // Logo pojok kiri atas
+    overlayLogo = `<div class="s-logo-corner"><img src="${brandLogo}" alt="brand"></div>`;
+    brand = accountName ? '' : `<span class="s-bottom-name">Karang</span>`;
+  } else {
+    // 'bottom' (default): logo di bottom bar
+    brand = logoImg;
   }
+
   const acct = accountName ? `<div class="s-bottom-account">${esc(accountName)}</div>` : '';
   const bottom = `<div class="s-bottom"><div class="s-bottom-logo">${brand}${acct}</div><div class="s-counter">${i+1} / ${total}</div></div>`;
   const bgEnabled = document.getElementById('bgToggle').checked;
   const bgHtml = bgEnabled && bgImageUrl
     ? `<img class="s-bg-img" src="${bgImageUrl}" alt="">`
     : '';
-  const base = `<div class="s-bg"></div>${bgHtml}<div class="s-topline"></div><div class="s-num">${num}</div>`;
+  const base = `<div class="s-bg"></div>${bgHtml}${overlayLogo}<div class="s-topline"></div><div class="s-num">${num}</div>`;
 
   if (s.type === 'hook') {
     el.innerHTML = `${base}
